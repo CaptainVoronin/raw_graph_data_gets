@@ -1,0 +1,65 @@
+// Организация
+
+VERTEX_START
+class: O [-1,10]
+own: OU [5,30]
+prop: name ru.nextbi.generation.atomic.StringGenerator
+prop: address ru.nextbi.generation.atomic.StringGenerator
+prop: city ru.nextbi.generation.atomic.DictionarySet dictionary=C:\Users\Max\IdeaProjects\raw_graph_data_gets\ru-cities.txt 
+prop: send_date ru.nextbi.generation.atomic.DateTimeGenerator begin=01.01.2018 end=31.09.2018 format=dd.MM.yyyy
+VERTEX_END
+
+// Банк
+VERTEX_START
+class: bank [-1,100]
+prop: name ru.nextbi.generation.atomic.DictionarySet dictionary=C:\Users\Max\IdeaProjects\raw_graph_data_gets\bank-list.txt 
+prop: city ru.nextbi.generation.atomic.DictionarySet dictionary=C:\Users\Max\IdeaProjects\raw_graph_data_gets\ru-cities.txt 
+prop: address ru.nextbi.generation.atomic.StringGenerator
+VERTEX_END
+
+// Банковский счет
+VERTEX_START
+class: account [-1,100]
+posession: bank 
+prop: name ru.nextbi.generation.atomic.DigitStringGenerator length=24
+prop: currency ru.nextbi.generation.atomic.OptionChooser set=USD,EU,RU,GBP
+prop: created ru.nextbi.generation.atomic.DateTimeGenerator begin=01.01.2014 end=31.09.2018 format=dd.MM.yyyy
+VERTEX_END
+
+// Отделы в организации
+VERTEX_START
+class: OU [-1,10]
+own: employee [1,20] 
+prop: name ru.nextbi.generation.atomic.StringGenerator
+VERTEX_END
+
+// Сотрудники
+VERTEX_START
+class: employee 
+own: email [1,3] 
+own: account [1,4]
+prop: name ru.nextbi.generation.atomic.NameGenerator male-names=C:\Users\Max\IdeaProjects\raw_graph_data_gets\male-names.txt male-surnames=C:\Users\Max\IdeaProjects\raw_graph_data_gets\male-surnames.txt female-names=C:\Users\Max\IdeaProjects\raw_graph_data_gets\female-names.txt female-surnames=C:\Users\Max\IdeaProjects\raw_graph_data_gets\female-surnames.txt 
+prop: position ru.nextbi.generation.atomic.StringGenerator
+VERTEX_END
+
+// Сотрудники
+VERTEX_START
+class: email
+prop: address ru.nextbi.generation.atomic.EMailAddressGenerator
+VERTEX_END
+
+T_EDGE_START
+class: message [0,10]
+from: email
+to: email
+prop: subject ru.nextbi.generation.atomic.StringGenerator
+prop: send_date ru.nextbi.generation.atomic.DateTimeGenerator begin=01.01.2018 end=31.09.2018 format=dd.MM.yyyy
+T_EDGE_END
+
+T_EDGE_START
+class: transaction [0,10]
+from: account
+to: account
+prop: amount ru.nextbi.generation.atomic.RandomNumberGenerator min=100 max=1000000000
+prop: send_date ru.nextbi.generation.atomic.DateTimeGenerator begin=01.01.2018 end=31.09.2018 format=dd.MM.yyyy
+T_EDGE_END
