@@ -1,0 +1,62 @@
+// Люди
+VERTEX_START
+class: person [-1,100000]
+own: skype [0,2]
+own: phone [1,3]
+prop: id
+prop: name ru.nextbi.generation.atomic.NameGenerator male-names=C:\Users\Max\IdeaProjects\raw_graph_data_gets\male-names.txt male-surnames=C:\Users\Max\IdeaProjects\raw_graph_data_gets\male-surnames.txt female-names=C:\Users\Max\IdeaProjects\raw_graph_data_gets\female-names.txt female-surnames=C:\Users\Max\IdeaProjects\raw_graph_data_gets\female-surnames.txt 
+VERTEX_END
+
+// Сотовые операторы
+VERTEX_START
+class: operator 
+prop: id
+prop: name ru.nextbi.generation.atomic.OptionChooser set=Билайн,МТС,Megafon,Tele2
+VERTEX_END
+
+// Скайп
+VERTEX_START
+class: skype 
+prop: id
+prop: name ru.nextbi.generation.atomic.StringGenerator
+VERTEX_END
+
+//  Телефон
+VERTEX_START
+class: phone
+posession: operator
+own: WhatsApp
+own: telegramm 
+prop: id
+prop: number ru.nextbi.generation.atomic.PhoneNumberGenerator
+VERTEX_END
+
+// WhatsApp
+VERTEX_START
+class: WhatsApp
+prop: id
+prop: number ru.nextbi.generation.atomic.StringGenerator
+VERTEX_END
+
+// Telegramm
+VERTEX_START
+class: telegramm
+prop: id
+prop: number ru.nextbi.generation.atomic.StringGenerator
+VERTEX_END
+
+T_EDGE_START
+class: whats_app_message [0,100]
+from: WhatsApp
+to: WhatsApp
+prop: id
+prop: send_date ru.nextbi.generation.atomic.DateTimeGenerator start=01.01.2018 end=31.09.2018 format=dd.MM.yyyy
+T_EDGE_END
+
+T_EDGE_START
+class: telegramm_message [0,10]
+from: telegramm
+to: telegramm
+prop: id 
+prop: send_date ru.nextbi.generation.atomic.DateTimeGenerator start=01.01.2018 end=31.09.2018 format=dd.MM.yyyy
+T_EDGE_END
