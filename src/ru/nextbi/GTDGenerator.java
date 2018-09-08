@@ -4,7 +4,6 @@ import ru.nextbi.generation.*;
 import ru.nextbi.generation.atomic.GeneratorUtils;
 import ru.nextbi.generation.atomic.IGenerator;
 import ru.nextbi.model.*;
-import ru.nextbi.writers.TEdgeCSVWriter;
 import ru.nextbi.writers.VertexCSVWriter;
 
 import org.apache.commons.cli.*;
@@ -90,8 +89,8 @@ public class GTDGenerator {
 
         try {
             HashMap<String, IGenerator> generators = createGenerators( model );
-            Graph graph = GraphFactory.createGraph( model, generators );
-            writeGraph( dir, model, graph );
+            Graph graph = GraphFactory.createGraph( dir, model, generators );
+            writeVertices( dir, model, graph );
         }
         catch( Exception e )
         {
@@ -99,7 +98,7 @@ public class GTDGenerator {
         }
     }
 
-    private static void writeGraph(File dir, GraphModel model, Graph graph) throws Exception
+    private static void writeVertices(File dir, GraphModel model, Graph graph) throws Exception
     {
         Map< String, VertexDescription > desc = model.getFlatVertexDescriptions();
 
@@ -110,17 +109,6 @@ public class GTDGenerator {
             String filename = vd.getClassName() + ".csv";
             VertexCSVWriter vw = new VertexCSVWriter( dir, filename, ',' );
             vw.write( vd, vertices  );
-        }
-
-        Map< String, TEdgeDescription> teds = model.getTEdgeDescriptionFlatList();
-
-        for( String key : teds.keySet() )
-        {
-            TEdgeDescription ted = teds.get( key );
-            List<BaseEdge> edges = graph.getEdges( ted.getClassName() );
-            String filename = ted.getClassName() + ".csv";
-            TEdgeCSVWriter ew = new TEdgeCSVWriter( dir, filename, ',' );
-            ew.write( ted, edges );
         }
     }
 

@@ -13,47 +13,37 @@ public class TEdgeCSVWriter {
     File dir;
     String filename;
     char delimiter;
+    TEdgeSerializer serializer;
+    TEdgeDescription ted;
+    FileWriter fw;
 
-    public TEdgeCSVWriter( File targetDir, String filename, char delimiter )
-    {
+    public TEdgeCSVWriter( File targetDir, TEdgeDescription ted, char delimiter ) throws IOException {
         dir = targetDir;
-        this.filename = filename;
+        this.filename = ted.getClassName() + File.separator + ".csv";
         this.delimiter = delimiter;
+        this.ted = ted;
+        serializer = new TEdgeSerializer ();
+        serializer.setDelimiter( delimiter );
+        File f = new File( dir.getPath() + File.separator + filename );
+        fw = new FileWriter( f );
     }
 
-    public void write(TEdgeDescription ted, List<BaseEdge> edges ) throws Exception
-    {
-        System.out.println( "Start writing " + ted.getClassName() );
-        File f = new File( dir.getPath() + "/" + filename );
-        FileWriter fw = new FileWriter( f );
-        writeHeader(  fw, ted );
-        writeElements( fw, ted, edges );
-        fw.close();
-        System.out.println( "Done" );
-    }
-
-    private void writeElements(FileWriter fw, TEdgeDescription ted, List<BaseEdge> edges) throws Exception {
-        TEdgeSerializer vs = new TEdgeSerializer();
-        vs.setDelimiter( delimiter );
-        for( BaseEdge v : edges )
-            fw.write( vs.edgeToString( ted , v));
+    public void writeElement( BaseEdge edge ) throws Exception {
+        fw.write( serializer.edgeToString( ted , edge ));
     }
 
     /**
      * Пишет заголовок файла.
      * ID, from, to и потом остальные свойства
-     * @param fw
-     * @param desc
      * @throws IOException
      */
-    private void writeHeader(FileWriter fw, TEdgeDescription desc) throws IOException {
+    public void writeHeader( ) throws IOException {
         StringBuilder st = new StringBuilder();
 
-        //st.append( "id" ).append( delimiter );
         st.append( "from" ).append( delimiter );
         st.append( "to" ).append( delimiter );
 
-        Map<String, GraphObjectProperty > props = desc.getProperties();
+        Map<String, GraphObjectProperty > props = ted.getProperties();
 
         for( String key : props.keySet() )
             st.append( props.get( key ).name ).append( delimiter );
@@ -61,5 +51,14 @@ public class TEdgeCSVWriter {
         st.append( '\n' );
 
         fw.write( st.toString() );
+    }
+
+    public void close()
+    {
+        try {
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

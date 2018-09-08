@@ -7,6 +7,7 @@ import ru.nextbi.model.GraphModel;
 import ru.nextbi.model.TEdgeDescription;
 import ru.nextbi.model.VertexDescription;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -15,7 +16,7 @@ public class GraphFactory
 {
     protected GraphFactory(){}
 
-    public static final Graph createGraph(GraphModel model, HashMap< String, IGenerator> generators ) throws Exception
+    public static final Graph createGraph(File dir, GraphModel model, HashMap< String, IGenerator> generators ) throws Exception
     {
         Graph graph = new Graph();
 
@@ -45,6 +46,7 @@ public class GraphFactory
         System.out.println( "Done" );
 
         System.out.println( "Generating edges" );
+
         // Потом генерятся все ребра
         classes = model.getTEdgeDescriptionFlatList().keySet();
 
@@ -55,7 +57,7 @@ public class GraphFactory
             Pair<Integer, Integer> pair = VertexGenerator.getRange( ted.getMin(), ted.getMax() );
 
             for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ )
-                TEdgeGenerator.generate( graph, model, ted, generators );
+                TEdgeGenerator.generate( dir, graph, model, ted, generators );
         }
         System.out.println( "Done" );
         return graph;
