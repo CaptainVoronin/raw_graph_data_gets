@@ -26,15 +26,27 @@ public final class GeneratorUtils
     {
         Map<String, String> params = new HashMap<>();
 
-        String buff = rawParams.trim();
-        String[] parts = buff.split(" ");
+        String buff = rawParams;
+        if( buff == null )
+            return params;
+
+        String[] parts = buff.trim().split(" ");
 
         for (int i = 0; i < parts.length; i++) {
             String dummy = parts[i].trim();
             if( dummy.length() == 0 )
                 continue;
+
             String[] pair = dummy.split("=");
-            params.put(pair[0], pair[1] != null ? pair[1] : "");
+            if( pair.length < 2 )
+                params.put( pair[0], "true" );
+            else if( pair.length == 2 )
+                params.put( pair[0], pair[1] );
+            else
+            {
+                params.put( pair[0], pair[1] );
+                System.out.println( "It seems param the string contains excessive '=' character" );
+            }
         }
         return params;
     }

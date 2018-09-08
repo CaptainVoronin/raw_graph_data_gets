@@ -13,6 +13,7 @@ public class GraphElementDescription
     protected int max;
     protected  Map<String, GraphObjectProperty> props;
 
+
     public GraphElementDescription()
     {
         props = new HashMap<>();

@@ -71,12 +71,16 @@ public class GTDGenerator {
             String rawDesc = new String(Files.readAllBytes(Paths.get(schemeFile)));
 
             GTDGenerator gen = new GTDGenerator();
+
+        try {
             gen.generateGraph( rawDesc, dir );
+        } catch( Exception e ) {
+            e.printStackTrace();
+        }
 
     }
 
-    void generateGraph( String rawDescription, File dir )
-    {
+    void generateGraph( String rawDescription, File dir ) throws Exception{
         GraphModel model = GraphModelParser.parse( rawDescription );
         boolean result = GraphModelParser.check( model );
 

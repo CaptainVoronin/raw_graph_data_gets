@@ -30,8 +30,7 @@ public class GraphModelParser
 {
     static Pattern pattern = Pattern.compile( "\\[(.*?)\\]" );
 
-    public static final GraphModel parse(String buff )
-    {
+    public static final GraphModel parse(String buff ) throws Exception{
         System.out.println( "Start parsing" );
 
         GraphModel model = new GraphModel();
@@ -63,8 +62,7 @@ public class GraphModelParser
         return model;
     }
 
-    private static int parseTEdge(String[] rows, int i, TEdgeDescription ted)
-    {
+    private static int parseTEdge(String[] rows, int i, TEdgeDescription ted) throws Exception{
         int j;
         Map<String, GraphObjectProperty> props = new HashMap<>();
         for( j = i; j < rows.length; j++ )
@@ -90,6 +88,10 @@ public class GraphModelParser
             else if( row.equalsIgnoreCase( "VERTEX_END"))
                 break;
         }
+
+        if( !props.containsKey( GraphElement.KEY_ID ) )
+            throw new Exception( "A graph element must have ID property");
+
         ted.setProperties( props );
         return j;
 
@@ -153,8 +155,7 @@ public class GraphModelParser
         return result;
     }
 
-    private static int parseVertex(String[] rows, int i, VertexDescription vd)
-    {
+    private static int parseVertex(String[] rows, int i, VertexDescription vd) throws Exception{
         int j;
         Map<String, GraphObjectProperty> props = new HashMap<>();
         for( j = i; j < rows.length; j++ )
@@ -180,7 +181,8 @@ public class GraphModelParser
             else if( row.equalsIgnoreCase( "VERTEX_END"))
                 break;
         }
-
+        if( !props.containsKey( GraphElement.KEY_ID ) )
+            throw new Exception( "A graph element must have ID property");
         vd.setProperties( props );
         return j;
     }
@@ -240,7 +242,7 @@ public class GraphModelParser
             p.generatorClassName = tk[1];
         else
         {
-            p.generatorClassName = "ru.nextbi.generation.StringGenerator";
+            p.generatorClassName = "ru.nextbi.generation.atomic.LongIDGenerator";
             return p;
         }
 
