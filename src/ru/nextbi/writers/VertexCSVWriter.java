@@ -47,7 +47,7 @@ public class VertexCSVWriter
         if( vd.getParentClassName() != null )
             st.append( vd.getParentClassName() ).append( "_id" ).append( delimiter );
 
-        st.append( "id" ).append( delimiter );
+        //st.append( "id" ).append( delimiter );
 
         Map<String, GraphObjectProperty > props = vd.getProperties();
 

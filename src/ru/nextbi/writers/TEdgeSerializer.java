@@ -22,7 +22,7 @@ public class TEdgeSerializer
         Map<String, String>  values = v.getProperties();
 
         // ID придется записать силовым методом
-        st.append( values.get( GraphElement.KEY_ID ) ).append( delimiter );
+        //st.append( values.get( GraphElement.KEY_ID ) ).append( delimiter );
 
         st.append( v.getFrom().getId() ).append( delimiter );
         st.append( v.getTo().getId() ).append( delimiter );

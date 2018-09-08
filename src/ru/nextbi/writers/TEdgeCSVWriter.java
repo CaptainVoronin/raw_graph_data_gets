@@ -49,7 +49,7 @@ public class TEdgeCSVWriter {
     private void writeHeader(FileWriter fw, TEdgeDescription desc) throws IOException {
         StringBuilder st = new StringBuilder();
 
-        st.append( "id" ).append( delimiter );
+        //st.append( "id" ).append( delimiter );
         st.append( "from" ).append( delimiter );
         st.append( "to" ).append( delimiter );
 

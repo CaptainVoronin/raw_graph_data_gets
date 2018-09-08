@@ -35,7 +35,7 @@ public class VertexSerializer
         Map<String, String>  values = v.getProperties();
 
         // ID придется записать силовым методом
-        st.append( values.get( GraphElement.KEY_ID ) ).append( delimiter );
+        //st.append( values.get( GraphElement.KEY_ID ) ).append( delimiter );
 
         for( String name : props.keySet() )
             st.append( values.get( name ) ).append( delimiter );
