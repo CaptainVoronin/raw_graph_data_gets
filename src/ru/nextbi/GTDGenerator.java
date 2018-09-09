@@ -85,15 +85,17 @@ public class GTDGenerator
 
     void generateGraph( String rawDescription, File dir ) throws Exception{
         config = new HashMap<>();
+
+        // Положить в конфиг рабочую директорию
         String buff = FileSystems.getDefault().getPath(".").toAbsolutePath().toString();
         buff = buff.substring( 0, buff.length() - 1 );
         config.put( CURRENT_DIR_KEY, buff );
+
         GraphModel model = GraphModelParser.parse( config, rawDescription );
         boolean result = GraphModelParser.check( model );
 
         if( !result )
             System.exit( 1 );
-
 
         try {
 
@@ -110,7 +112,7 @@ public class GTDGenerator
 
     private void writeVertices(File dir, GraphModel model, Graph graph) throws Exception
     {
-        Map< String, VertexDescription > desc = model.getFlatVertexDescriptions();
+        Map< String, VertexDescription > desc = model.getVertexDescriptions();
 
         for( String key : desc.keySet() )
         {
@@ -129,7 +131,7 @@ public class GTDGenerator
         HashMap<String,IGenerator> generators = new HashMap<>();
 
         // Генераторы для вершин
-        Set<String> keys = model.getFlatVertexDescriptions().keySet();
+        Set<String> keys = model.getVertexDescriptions().keySet();
 
         // Пошли по вершинам
         for( String key : keys )
@@ -142,7 +144,7 @@ public class GTDGenerator
         }
 
         // Генераторы для вершин
-        keys = model.getTEdgeDescriptionFlatList().keySet();
+        keys = model.getTEdgeDescriptionList().keySet();
 
         // Пошли по вершинам
         for( String key : keys )

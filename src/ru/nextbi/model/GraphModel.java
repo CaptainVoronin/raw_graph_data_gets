@@ -2,56 +2,54 @@ package ru.nextbi.model;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * Модель графа. Все просто.
  * Есть две структуры:
- *  - vertexDescriptionFlatList
+ *  - vertexDescriptionList
  *  - vertexDescriptionStructure
  *  Первая седержит плоский скписок всех вершин
  *  Вторая дерево с учетом зависимостей
  */
 public class GraphModel
 {
-    Map<String, VertexDescription> vertexDescriptionFlatList;
+    Map<String, VertexDescription> vertexDescriptionList;
 
 
-    Map<String, TEdgeDescription> tEdgeDescriptionFlatList;
+    Map<String, TEdgeDescription> tEdgeDescriptionList;
 
 
     public GraphModel()
     {
-        vertexDescriptionFlatList = new HashMap<>();
-        tEdgeDescriptionFlatList = new HashMap<>();
+        vertexDescriptionList = new HashMap<>();
+        tEdgeDescriptionList = new HashMap<>();
     }
 
     public VertexDescription getVertexDescription(String childClassName)
     {
-        return vertexDescriptionFlatList.get( childClassName );
+        return vertexDescriptionList.get( childClassName );
     }
 
-    public void addVertexDescriptionToFlat(VertexDescription vd )
+    public void addVertexDescription(VertexDescription vd )
     {
-        vertexDescriptionFlatList.put( vd.getClassName(), vd );
+        vertexDescriptionList.put( vd.getClassName(), vd );
     }
 
-    public final Map<String, VertexDescription> getFlatVertexDescriptions()
+    public final Map<String, VertexDescription> getVertexDescriptions()
     {
-        return vertexDescriptionFlatList;
+        return vertexDescriptionList;
     }
 
     public void addTEdgeDescription(TEdgeDescription ted)
     {
-        tEdgeDescriptionFlatList.put( ted.getClassName(), ted );
+        tEdgeDescriptionList.put( ted.getClassName(), ted );
     }
 
-    public Map<String, TEdgeDescription> getTEdgeDescriptionFlatList() {
-        return tEdgeDescriptionFlatList;
+    public Map<String, TEdgeDescription> getTEdgeDescriptionList() {
+        return tEdgeDescriptionList;
     }
-
 
     public TEdgeDescription getTEdgeDescription(String key) {
-        return tEdgeDescriptionFlatList.get( key );
+        return tEdgeDescriptionList.get( key );
     }
 }

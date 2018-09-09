@@ -1,8 +1,10 @@
 package ru.nextbi.model;
 
+import javafx.util.Pair;
 import ru.nextbi.generation.GraphObjectProperty;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +31,7 @@ import java.util.regex.Pattern;
 
 public class GraphModelParser
 {
-    static Pattern pattern = Pattern.compile( "\\[(.*?)\\]" );
+    static Pattern pattern_range_extractor = Pattern.compile( "\\[(.*?)\\]" );
     static Pattern pattern_get_generator_call = Pattern.compile( "(^[a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)([a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)(\\(\\s*)(.*)(\\s*\\))" );
 
     public static final GraphModel parse( Map<String,String> config, String buff ) throws Exception{
@@ -50,7 +52,7 @@ public class GraphModelParser
             if( row.equalsIgnoreCase( "VERTEX_START") ) {
                 VertexDescription vd = new VertexDescription();
                 i = parseVertex( rows, ++i, vd );
-                model.addVertexDescriptionToFlat( vd );
+                model.addVertexDescription( vd );
             } else if(row.equalsIgnoreCase( "T_EDGE_START") )
             {
                 TEdgeDescription ted = new TEdgeDescription();
@@ -142,7 +144,7 @@ public class GraphModelParser
         boolean result = true;
         System.out.println( "Start checking" );
 
-        Map<String, VertexDescription> vs = model.getFlatVertexDescriptions();
+        Map<String, VertexDescription> vs = model.getVertexDescriptions();
 
         // Идем по  списку вершин
         for( String type : vs.keySet() )
@@ -167,10 +169,10 @@ public class GraphModelParser
             }
         }
 
-        Map<String, TEdgeDescription> teds = model.getTEdgeDescriptionFlatList();
+        Map<String, TEdgeDescription> teds = model.getTEdgeDescriptionList();
 
         // Идем по  списку транзитных ребер
-        // Проверяем, на что они сослались
+        // Проверяем, на что они сослались?
         for( String type : teds.keySet() )
         {
             TEdgeDescription ted = teds.get( type );
@@ -191,6 +193,69 @@ public class GraphModelParser
         else
             System.out.println( "There are errors" );
 
+        result = checkCycles( model );
+
+        return result;
+    }
+
+    private static boolean checkCycles(GraphModel model)
+    {
+        boolean result = true;
+        List<String> vertices = new ArrayList<>();
+        for( String className : model.getVertexDescriptions().keySet() )
+        {
+            VertexDescription vd = model.getVertexDescription( className );
+            List<ChildNodeDescriptor> children = vd.getDependent();
+            if( children.size() == 0 )
+                continue;
+            else
+            {
+                vertices.add( className );
+                if( !( result = findCicle( vertices, model, vd )  ) )
+                    break;
+                else
+                    vertices.clear();
+            }
+        }
+        if( !result )
+        {
+            String chain = "";
+            for( String name : vertices )
+            {
+                chain += name + " ";
+            }
+
+            System.out.println( "Circular dependeces found: " + chain );
+        }
+        return result;
+    }
+
+    private static boolean findCicle(List<String> vertices, GraphModel model, VertexDescription vd) {
+        boolean result = true;
+        List<ChildNodeDescriptor> children = vd.getDependent();
+
+        for( ChildNodeDescriptor child : children )
+        {
+            if( vertices.contains( child.childClassName  )) {
+                // положить для информации
+                //vertices.add( vd.getClassName() );
+                return false;
+            }
+            else
+            {
+                VertexDescription vChild = model.getVertexDescription( child.childClassName );
+                if( children.size() == 0 )
+                    continue;
+                else
+                {
+                    vertices.add( vChild.getClassName() );
+                    if( !( result = findCicle( vertices, model, vChild )  ) )
+                        break;
+                    else
+                        vertices.remove( vChild.getClassName() );
+                }
+            }
+        }
         return result;
     }
 
@@ -218,9 +283,9 @@ public class GraphModelParser
             {
                 parseOwnStatement( vd, row );
             }
-            else if( row.startsWith( "posession" ) )
+            else if( row.startsWith( "link" ) )
             {
-                parsePosessionStatement( vd, row );
+                parseLinkStatement( vd, row );
             }
             else if( row.equalsIgnoreCase( "VERTEX_END"))
                 break;
@@ -231,9 +296,9 @@ public class GraphModelParser
         return j;
     }
 
-    private static void parsePosessionStatement(VertexDescription vd, String row)  {
+    private static void parseLinkStatement(VertexDescription vd, String row)  {
         String val = getValueString( row ).trim();
-        vd.addPosession( val );
+        vd.addLink( val );
     }
 
     private static void parseClassString( GraphElementDescription eld , String row)
@@ -241,9 +306,9 @@ public class GraphModelParser
         String buff = getValueString(row).trim();
         String[] parts = buff.split( " " );
         eld.setClassName( parts[0].trim() );
-        Range range = getRange( row );
-        eld.setMin( range.min );
-        eld.setMax( range.max );
+        Pair<Integer, Integer> range = getRange( row );
+        eld.setMin( range.getKey().intValue() );
+        eld.setMax( range.getValue().intValue() );
     }
 
     private static void parseOwnStatement(VertexDescription vd, String row)
@@ -262,9 +327,9 @@ public class GraphModelParser
         chd.childClassName = tk[0];
 
         // Сколько их генерить?
-        Range r = getRange( row );
-        chd.min = r.min;
-        chd.max = r.max;
+        Pair<Integer, Integer> r = getRange( row );
+        chd.min = r.getKey().intValue();
+        chd.max = r.getValue().intValue();
 
         vd.addDependent( chd );
     }
@@ -354,32 +419,26 @@ public class GraphModelParser
     /**
      * Извлекает пару целых значений из строки вида [x,y]
      */
-    final static Range getRange( String row )
+    final static Pair< Integer, Integer> getRange(String row )
     {
-        Range range = new Range();
-        Matcher m = pattern.matcher( row );
+        Pair<Integer, Integer> range;
+        Matcher m = pattern_range_extractor.matcher( row );
+
         if( !m.find() )
         {
-            range.min = -1;
-            range.max = 1;
+            range = new Pair<>( -1, 1 );
         }
         else
         {
             String[] raws = m.group(1).split( "," );
-            Integer i = Integer.parseInt( raws[0].trim() );
-            range.min = i.intValue();
-            i = Integer.parseInt( raws[1].trim() );
+            Integer min = Integer.parseInt( raws[0].trim() );
+            Integer max = Integer.parseInt( raws[1].trim() );
 
-            range.max = i.intValue();
-
-            if( range.min > range.max )
-                throw new IllegalArgumentException( "Min value is greter than max value " + row );
+            if( min.intValue() >= max.intValue() )
+                throw new IllegalArgumentException( "Min value must be less than max value " + row );
+            range = new Pair<>( min, max );
         }
-        return range;
-    }
 
-    static class Range{
-        int min;
-        int max;
+        return range;
     }
 }

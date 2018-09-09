@@ -21,12 +21,12 @@ public class VertexDescription extends GraphElementDescription
 
     String parentClassName;
     List<ChildNodeDescriptor> dependent;
-    List<String> posession;
+    List<String> links;
 
     public VertexDescription() {
         super();
         dependent = new ArrayList<>();
-        posession = new ArrayList<>();
+        links = new ArrayList<>();
     }
 
     public List<ChildNodeDescriptor> getDependent() {
@@ -50,12 +50,12 @@ public class VertexDescription extends GraphElementDescription
         this.parentClassName = parentClassName;
     }
 
-    public void addPosession( String value )
+    public void addLink( String value )
     {
-        posession.add( value );
+        links.add( value );
     }
 
-    public List<String> getPosession(){
-        return posession;
+    public List<String> getLinks(){
+        return links;
     }
 }

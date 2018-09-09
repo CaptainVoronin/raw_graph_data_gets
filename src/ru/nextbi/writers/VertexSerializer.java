@@ -41,7 +41,7 @@ public class VertexSerializer
             st.append( values.get( name ) ).append( delimiter );
 
         Map<String, String> links = v.getPosessors();
-        for( String className : vd.getPosession() )
+        for( String className : vd.getLinks() )
         {
             st.append( links.get( className ) ).append( delimiter );
         }

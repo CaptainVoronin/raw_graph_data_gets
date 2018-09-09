@@ -21,7 +21,7 @@ public class GraphFactory
         Graph graph = new Graph();
 
         // Сначала генераятся все вершины
-        Set<String> classes = model.getFlatVertexDescriptions().keySet();
+        Set<String> classes = model.getVertexDescriptions().keySet();
         System.out.println( "Generating vertices" );
         for( String key : classes )
         {
@@ -53,7 +53,7 @@ public class GraphFactory
         System.out.println( "Generating edges" );
 
         // Потом генерятся все ребра
-        Set<String> classes = model.getTEdgeDescriptionFlatList().keySet();
+        Set<String> classes = model.getTEdgeDescriptionList().keySet();
 
         for( String key : classes )
         {
@@ -71,7 +71,7 @@ public class GraphFactory
     }
 
     private static void resolveLinks(Graph graph, GraphModel model){
-        Set<String> classes = model.getFlatVertexDescriptions().keySet();
+        Set<String> classes = model.getVertexDescriptions().keySet();
 
         /**
          * Имена классов вершин, на которые надо поставить ссылки
@@ -83,7 +83,7 @@ public class GraphFactory
         {
             // Взять описание вершины
             VertexDescription vd = model.getVertexDescription( key );
-            if( ( links = vd.getPosession() ).size() == 0 )
+            if( ( links = vd.getLinks() ).size() == 0 )
                 continue; // от данного класса вершин ссылок нет
 
             // есть ссылки, берем все экземпляры вершин этого класса

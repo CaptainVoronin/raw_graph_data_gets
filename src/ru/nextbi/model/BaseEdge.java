@@ -2,7 +2,7 @@ package ru.nextbi.model;
 
 public abstract class BaseEdge extends GraphElement
 {
-    public enum EdgeKind { TRANSIT, POSESSION };
+    public enum EdgeKind { TRANSIT, LINK };
 
     BaseVertex from;
     BaseVertex to;
@@ -38,6 +38,6 @@ public abstract class BaseEdge extends GraphElement
 
     public EdgeKind getEdgeKind()
     {
-        return EdgeKind.POSESSION;
+        return EdgeKind.LINK;
     }
 }

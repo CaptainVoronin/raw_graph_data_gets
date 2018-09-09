@@ -6,13 +6,14 @@ import ru.nextbi.generation.atomic.IntGenerator;
 import ru.nextbi.model.*;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class VertexGenerator
 {
     protected VertexGenerator(){};
 
-    public static final void generate(Graph graph, GraphModel model, VertexDescription vd, BaseVertex parent, HashMap< String, IGenerator> generators ) throws Exception
+    public static final void generate( Graph graph, GraphModel model, VertexDescription vd, BaseVertex parent, HashMap< String, IGenerator> generators ) throws Exception
     {
         IGenerator gen;
 
@@ -34,12 +35,12 @@ public class VertexGenerator
 
             Pair<Integer, Integer> pair = getRange( desc.min, desc.max );
             for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ )
-                generate(graph, model, dch, vertex, generators );
+                generate( graph, model, dch, vertex, generators );
         }
 
     }
 
-    public static HashMap<String, String> generateProps(HashMap< String, IGenerator> generators, GraphElementDescription eld) throws Exception {
+    public static HashMap<String, String> generateProps( HashMap< String, IGenerator> generators, GraphElementDescription eld) throws Exception {
         IGenerator gen;
 
         HashMap<String, String> vp = new HashMap<>();
@@ -69,24 +70,18 @@ public class VertexGenerator
         if( min < 0 )
         {
             // Если min меньше нуля, это значит, что
-            // надосоздавать точно max элементов
+            // надо создавать точно max элементов
             lowerRange = 0;
             upperRange = max - 1;
         }
-        else if( min != max )
+        else
         {
             // Если дочек большей одной, то получить их количество
             // как случайное число
             upperRange = IntGenerator.getInt(min, max);
-            lowerRange = 0;
-        }
-        else
-        {
-            upperRange = 1;
-            lowerRange = 0;
+            lowerRange = min;
         }
 
         return new Pair<>( new Integer( lowerRange), new Integer( upperRange  ) );
     }
-
 }
