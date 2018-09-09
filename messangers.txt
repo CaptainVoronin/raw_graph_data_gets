@@ -3,60 +3,64 @@ VERTEX_START
 class: person [-1,100000]
 own: skype [0,2]
 own: phone [1,3]
-prop: id
-prop: name ru.nextbi.generation.atomic.NameGenerator male-names=C:\Users\Max\IdeaProjects\raw_graph_data_gets\male-names.txt male-surnames=C:\Users\Max\IdeaProjects\raw_graph_data_gets\male-surnames.txt female-names=C:\Users\Max\IdeaProjects\raw_graph_data_gets\female-names.txt female-surnames=C:\Users\Max\IdeaProjects\raw_graph_data_gets\female-surnames.txt 
+prop: id long_id()
+prop: name name( male-names=male-names.txt, male-surnames=male-surnames.txt female-names=female-names.txt female-surnames=female-surnames.txt )
 VERTEX_END
 
 // Сотовые операторы
 VERTEX_START
 class: operator [-1,4]
-prop: id
-prop: name ru.nextbi.generation.atomic.CircleSet set=Билайн,МТС,Megafon,Tele2
+prop: id long_id()
+prop: name cyclic ( set=Билайн,МТС,Megafon,Tele2 )
 VERTEX_END
 
 // Скайп
 VERTEX_START
 class: skype 
-prop: id
-prop: name ru.nextbi.generation.atomic.StringGenerator
+prop: id long_id
+prop: name string()
 VERTEX_END
 
 //  Телефон
 VERTEX_START
 class: phone
-posession: operator
+link: operator
 own: WhatsApp
 own: telegramm 
-prop: id
-prop: number ru.nextbi.generation.atomic.PhoneNumberGenerator
+prop: id long_id()
+prop: number phone_number()
 VERTEX_END
 
 // WhatsApp
 VERTEX_START
 class: WhatsApp
-prop: id
-prop: number ru.nextbi.generation.atomic.StringGenerator
+prop: id long_id()
+prop: number string()
 VERTEX_END
 
 // Telegramm
 VERTEX_START
 class: telegramm
-prop: id
-prop: number ru.nextbi.generation.atomic.StringGenerator
+prop: id long_id()
+prop: number string()
 VERTEX_END
 
 T_EDGE_START
 class: whats_app_message [0,10]
 from: WhatsApp
 to: WhatsApp
-prop: id
-prop: send_date ru.nextbi.generation.atomic.DateTimeGenerator start=01.01.2018 end=31.09.2018 format=dd.MM.yyyy
+prop: id long_id()
+prop: send_date datetime( start=01.01.2018, end=31.09.2018, format=dd.MM.yyyy )
 T_EDGE_END
 
 T_EDGE_START
 class: telegramm_message [0,10]
 from: telegramm
 to: telegramm
-prop: id 
-prop: send_date ru.nextbi.generation.atomic.DateTimeGenerator start=01.01.2018 end=31.09.2018 format=dd.MM.yyyy
+prop: id long_id()
+prop: send_date date_time( start=01.01.2018, end=31.09.2018, format=dd.MM.yyyy )
 T_EDGE_END
+
+CONFIG_START
+delimiter=,
+CONFIG_END
