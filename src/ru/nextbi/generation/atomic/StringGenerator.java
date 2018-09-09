@@ -1,5 +1,7 @@
 package ru.nextbi.generation.atomic;
 
+import java.util.Map;
+
 public class StringGenerator implements IGenerator
 {
     public int getLength() {
@@ -18,7 +20,7 @@ public class StringGenerator implements IGenerator
     }
 
     @Override
-    public void setParamString( String rawParams) throws Exception
+    public void setParams(Map<String, String> config, Map<String, String> params) throws Exception
     {};
 
     @Override
@@ -32,19 +34,6 @@ public class StringGenerator implements IGenerator
 
     public static String randomAlphaNumeric(int count)
     {
-
-        /*StringBuilder builder = new StringBuilder();
-
-        while (count-- != 0) {
-
-            int character = (int)(Math.random()*ALPHA_NUMERIC_STRING.length());
-
-            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
-
-        }
-
-        return builder.toString(); */
-
         return randomString( ALPHA_NUMERIC_STRING, count );
     }
 

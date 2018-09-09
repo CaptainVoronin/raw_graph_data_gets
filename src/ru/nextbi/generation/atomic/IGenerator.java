@@ -1,9 +1,9 @@
 package ru.nextbi.generation.atomic;
 
-import java.text.ParseException;
+import java.util.Map;
 
 public interface IGenerator
 {
-    void setParamString( String rawParams) throws Exception;
+    void setParams(Map<String, String> config, Map<String, String> params) throws Exception;
     String getValue();
 }

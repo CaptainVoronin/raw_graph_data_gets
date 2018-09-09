@@ -1,9 +1,9 @@
 package ru.nextbi.generation.atomic;
 
-public class CircleSet extends OptionChooser {
+public class CyclicSet extends OptionChooser {
     int counter ;
 
-    public CircleSet()
+    public CyclicSet()
     {
         super();
         counter = 0;

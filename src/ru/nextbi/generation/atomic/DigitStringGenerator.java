@@ -13,12 +13,9 @@ public class DigitStringGenerator implements IGenerator
     }
 
     @Override
-    public void setParamString(String rawParams) throws Exception{
-        Map<String,String> params = GeneratorUtils.parseParams( rawParams );
+    public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
         if( params.containsKey( "length" ) )
-        {
             length = Integer.parseInt( params.get( "length" ) );
-        }
     }
 
     @Override

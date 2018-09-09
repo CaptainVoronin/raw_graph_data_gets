@@ -1,10 +1,11 @@
 package ru.nextbi.generation.atomic;
 
+import java.util.Map;
 import java.util.UUID;
 
 public class UUIDIDGenerator implements  IIDGenerator {
     @Override
-    public void setParamString(String rawParams) throws Exception{
+    public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
 
     }
 

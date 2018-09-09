@@ -1,5 +1,7 @@
 package ru.nextbi.generation.atomic;
 
+import ru.nextbi.GTDGenerator;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -19,8 +21,7 @@ public class DictionarySet implements IGenerator
     }
 
     @Override
-    public void setParamString( String rawParams ) throws Exception{
-        Map<String, String> params = GeneratorUtils.parseParams( rawParams );
+    public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
         String path = params.get( "dictionary" );
         String buff = params.get( "cashe" );
         if( buff!= null )
@@ -31,6 +32,7 @@ public class DictionarySet implements IGenerator
 
         if( path != null )
         {
+            path = GeneratorUtils.makeAbsolutePath( config.get(GTDGenerator.CURRENT_DIR_KEY  ), path );
             File f = new File( path );
             if( !f.exists() )
                 throw new ParseException( "Dictionary file not found", 0 );
@@ -56,7 +58,7 @@ public class DictionarySet implements IGenerator
     public String getValue()
     {
         if ( items != null )
-            return items.get( RandomNumberGenerator.getInt( 0, items.size() - 1 ));
+            return items.get( IntGenerator.getInt( 0, items.size() - 1 ));
         else
             return StringGenerator.randomAlphaNumeric( 10 );
     }

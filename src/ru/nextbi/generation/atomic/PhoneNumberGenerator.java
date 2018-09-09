@@ -1,8 +1,10 @@
 package ru.nextbi.generation.atomic;
 
+import java.util.Map;
+
 public class PhoneNumberGenerator implements IGenerator{
     @Override
-    public void setParamString(String rawParams) throws Exception{
+    public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
 
     }
 

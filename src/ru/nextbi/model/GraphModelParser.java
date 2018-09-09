@@ -2,6 +2,7 @@ package ru.nextbi.model;
 
 import ru.nextbi.generation.GraphObjectProperty;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,8 +30,9 @@ import java.util.regex.Pattern;
 public class GraphModelParser
 {
     static Pattern pattern = Pattern.compile( "\\[(.*?)\\]" );
+    static Pattern pattern_get_generator_call = Pattern.compile( "(^[a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)([a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)(\\(\\s*)(.*)(\\s*\\))" );
 
-    public static final GraphModel parse(String buff ) throws Exception{
+    public static final GraphModel parse( Map<String,String> config, String buff ) throws Exception{
         System.out.println( "Start parsing" );
 
         GraphModel model = new GraphModel();
@@ -42,7 +44,7 @@ public class GraphModelParser
             String row = rows[i].trim();
 
             // Клмментарии и пустые строки
-            if( row.startsWith( "\\\\") || row.length() == 0 )
+            if( row.startsWith( "//") || row.length() == 0 )
                 continue;
 
             if( row.equalsIgnoreCase( "VERTEX_START") ) {
@@ -55,11 +57,44 @@ public class GraphModelParser
                 i = parseTEdge( rows, ++i, ted );
                 model.addTEdgeDescription( ted );
             }
-
+            else if(row.equalsIgnoreCase( "CONFIG_START") )
+            {
+                i = parseConfig( rows, ++i, config );
+            }
+            else
+                System.out.println( "Unknown directive " + row + ". Ignored" );
         }
 
         System.out.println( "Ended sucessfully" );
         return model;
+    }
+
+    private static int parseConfig(String[] rows, int i, Map<String,String> config)
+    {
+        int j;
+        for( j = i; j < rows.length; j++ )
+        {
+            String row = rows[j].trim();
+
+            if (row.length() == 0)
+                continue;
+            if (row.equalsIgnoreCase("CONFIG_END"))
+                break;
+            else if (row.startsWith("//"))
+                continue;
+            else {
+                String name = "", value = "";
+                int index = row.indexOf( "=" );
+                if( index == -1 )
+                    name = row;
+                else {
+                    name = row.substring(0, index );
+                    value = row.substring( index + 1, row.length() );
+                }
+                config.put( name, value );
+            }
+        }
+        return j;
     }
 
     private static int parseTEdge(String[] rows, int i, TEdgeDescription ted) throws Exception{
@@ -68,7 +103,11 @@ public class GraphModelParser
         for( j = i; j < rows.length; j++ )
         {
             String row = rows[j].trim();
-            if( row.startsWith( "class" ) )
+            if ( row.length() == 0 )
+                continue;
+            else if (row.startsWith("//"))
+                continue;
+            else if( row.startsWith( "class" ) )
             {
                 parseClassString( ted, row );
             }
@@ -161,7 +200,12 @@ public class GraphModelParser
         for( j = i; j < rows.length; j++ )
         {
             String row = rows[j].trim();
-            if( row.startsWith( "class" ) )
+
+            if ( row.length() == 0 )
+                continue;
+            else if (row.startsWith("//"))
+                continue;
+            else if( row.startsWith( "class" ) )
             {
                 parseClassString( vd, row );
             }
@@ -182,13 +226,12 @@ public class GraphModelParser
                 break;
         }
         if( !props.containsKey( GraphElement.KEY_ID ) )
-            throw new Exception( "A graph element must have ID property");
+            throw new ParseException( "A graph element must have ID property. Class" + vd.getClassName(), j );
         vd.setProperties( props );
         return j;
     }
 
-    private static void parsePosessionStatement(VertexDescription vd, String row)
-    {
+    private static void parsePosessionStatement(VertexDescription vd, String row)  {
         String val = getValueString( row ).trim();
         vd.addPosession( val );
     }
@@ -229,33 +272,69 @@ public class GraphModelParser
     private static GraphObjectProperty getProperty(String row)
     {
         String val = getValueString( row );
-        String[] tk = val.split( " " );
-        if( tk.length == 0 )
+        //val = "id long_id( initial=10000 )";
+
+        Matcher m = pattern_get_generator_call.matcher( val );
+
+        if( !m.find() )
             throw new IllegalArgumentException( "Property doesn't have a name " + row );
 
-        // Сначала идет имя свойства
-        GraphObjectProperty p = new GraphObjectProperty();
-        p.name = tk[0];
+        GraphObjectProperty gProperty = new GraphObjectProperty();
+        gProperty.name = m.group( 1 ).trim();
 
-        // Затем имя класса генератора
-        if( tk.length > 1 )
-            p.generatorClassName = tk[1];
+        // Имя класса или псевдоним генератора
+        if( m.groupCount() < 2 ) {
+            gProperty.generatorName = "ru.nextbi.generation.atomic.LongIDGenerator";
+            return gProperty;
+        }
         else
-        {
-            p.generatorClassName = "ru.nextbi.generation.atomic.LongIDGenerator";
-            return p;
+            gProperty.generatorName = m.group( 2 ).trim();
+
+        Map<String, String> paramsMap = new HashMap<>();
+
+        // Расщепить строку по запятым, но не тем, что находятся в кавычках
+        // fomat="a,b,c" не расщепится
+        String name, value;
+        if( m.groupCount() > 4 ) {
+            String[] args = m.group(4).split( ",(?=(?:[^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)");
+
+            // Получили список пар вида name=value
+            for( int k = 0; k < args.length; k++ )
+            {
+                // Если список аргументов пустой, то первым элементом массива будет пуста строка
+                // Проверим
+                if( args[0].trim().length() == 0 )
+                    break;
+
+                // Расщепить строку арнумента по знаку =
+                value = "";
+                int index = args[k].indexOf( "=" );
+
+                if( index == -1 )
+                    name = args[k];
+                else
+                {
+                    name = args[k].substring( 0, index ).trim();
+                    value = args[k].substring( index + 1, args[k].length() );
+
+                    if( value != null )
+                    {
+                        value = value.trim();
+                        if( value.startsWith( "\"") ) {
+                            value = value.substring(1, value.length());
+
+                            if (value.lastIndexOf("\"") == value.length() - 1)
+                                value = value.substring(0, value.length() - 1);
+                        }
+                    }
+                }
+                paramsMap.put( name, value );
+            }
         }
 
-        // Все, что идет после класса генератора рассматривается как параметры генератора
-        String buff = "";
-        for( int i = 2; i < tk.length; i++ )
-            buff += tk[i] + " ";
-
-        p.generatorParams = buff;
-
-        return p;
+        gProperty.generatorParams = paramsMap;
+        return gProperty;
     }
-
 
     /**
      * Возвращает строку после двоеточия. Тримит ее
@@ -286,7 +365,6 @@ public class GraphModelParser
         }
         else
         {
-
             String[] raws = m.group(1).split( "," );
             Integer i = Integer.parseInt( raws[0].trim() );
             range.min = i.intValue();

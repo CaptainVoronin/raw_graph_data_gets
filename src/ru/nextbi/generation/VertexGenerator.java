@@ -2,7 +2,7 @@ package ru.nextbi.generation;
 
 import javafx.util.Pair;
 import ru.nextbi.generation.atomic.IGenerator;
-import ru.nextbi.generation.atomic.RandomNumberGenerator;
+import ru.nextbi.generation.atomic.IntGenerator;
 import ru.nextbi.model.*;
 
 import java.util.HashMap;
@@ -54,7 +54,7 @@ public class VertexGenerator
             // Получить генератор значений для свойства
             gen = generators.get( p.generatorID );
             if( gen == null )
-                throw new Exception( "Generator not found for '" + p.generatorClassName + "'" );
+                throw new Exception( "Generator not found for '" + p.generatorName + "'" );
             String val = gen.getValue();
             vp.put( p.name, val );
         }
@@ -77,7 +77,7 @@ public class VertexGenerator
         {
             // Если дочек большей одной, то получить их количество
             // как случайное число
-            upperRange = RandomNumberGenerator.getInt(min, max);
+            upperRange = IntGenerator.getInt(min, max);
             lowerRange = 0;
         }
         else

@@ -1,6 +1,9 @@
 package ru.nextbi.generation.atomic;
 
 import java.io.*;
+import java.nio.file.FileSystemException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -8,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.security.MessageDigest;
+import java.util.regex.Pattern;
 
 public final class GeneratorUtils
 {
@@ -73,5 +77,16 @@ public final class GeneratorUtils
                 items.add( buff );
             br.close();
             return items;
+    }
+
+    public static String makeAbsolutePath( String currentDir, String buff ) throws Exception {
+        if( !Paths.get( buff ).isAbsolute() )
+        {
+            buff = currentDir + buff;
+            if( !Paths.get( buff ).isAbsolute() )
+                throw new Exception( "Can't make a path from " + currentDir + " and " + buff );
+        }
+
+        return buff;
     }
 }

@@ -6,7 +6,7 @@ public enum GeneratorAlias {
     datetime( "ru.nextbi.generation.atomic.DateTimeGenerator" ),
     dictionary( "ru.nextbi.generation.atomic.DictionarySet" ),
     digit_string( "ru.nextbi.generation.atomic.DigitStringGenerator" ),
-    email_adress( "ru.nextbi.generation.atomic.EMailAddressGenerator" ),
+    email( "ru.nextbi.generation.atomic.EMailAddressGenerator" ),
     long_id( "ru.nextbi.generation.atomic.LongIDGenerator" ),
     human_name( "ru.nextbi.generation.atomic.NameGenerator" ),
     option_chooser( "ru.nextbi.generation.atomic.OptionChooser" ),

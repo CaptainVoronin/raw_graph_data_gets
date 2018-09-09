@@ -1,11 +1,13 @@
 package ru.nextbi.generation.atomic;
 
+import java.util.Map;
+
 public class EMailAddressGenerator implements IGenerator
 {
     String domain;
 
     @Override
-    public void setParamString( String rawParams )
+    public void setParams(Map<String, String> config, Map<String, String> params)
     {
         domain = "ru";
     }

@@ -1,6 +1,7 @@
 package ru.nextbi;
 
 import ru.nextbi.generation.*;
+import ru.nextbi.generation.atomic.GeneratorAlias;
 import ru.nextbi.generation.atomic.GeneratorUtils;
 import ru.nextbi.generation.atomic.IGenerator;
 import ru.nextbi.model.*;
@@ -9,6 +10,7 @@ import ru.nextbi.writers.VertexCSVWriter;
 import org.apache.commons.cli.*;
 
 import java.io.*;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -16,11 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class GTDGenerator {
+public class GTDGenerator
+{
+    public static final String CURRENT_DIR_KEY = "current_dir";
+    Map<String, String > config;
 
-    public static void main(String[] args) throws IOException {
-
-
+    public static void main(String[] args) throws IOException
+    {
         Options ops = new Options();
 
         Option input = new Option("s", "scheme", true, "scheme file path");
@@ -80,7 +84,11 @@ public class GTDGenerator {
     }
 
     void generateGraph( String rawDescription, File dir ) throws Exception{
-        GraphModel model = GraphModelParser.parse( rawDescription );
+        config = new HashMap<>();
+        String buff = FileSystems.getDefault().getPath(".").toAbsolutePath().toString();
+        buff = buff.substring( 0, buff.length() - 1 );
+        config.put( CURRENT_DIR_KEY, buff );
+        GraphModel model = GraphModelParser.parse( config, rawDescription );
         boolean result = GraphModelParser.check( model );
 
         if( !result )
@@ -88,6 +96,7 @@ public class GTDGenerator {
 
 
         try {
+
             HashMap<String, IGenerator> generators = createGenerators( model );
             Graph graph = GraphFactory.createGraph( dir, model, generators );
             GraphFactory.createAndWriteEdges( dir, graph, model, generators );
@@ -99,7 +108,7 @@ public class GTDGenerator {
         }
     }
 
-    private static void writeVertices(File dir, GraphModel model, Graph graph) throws Exception
+    private void writeVertices(File dir, GraphModel model, Graph graph) throws Exception
     {
         Map< String, VertexDescription > desc = model.getFlatVertexDescriptions();
 
@@ -114,7 +123,7 @@ public class GTDGenerator {
         }
     }
 
-    private static HashMap<String,IGenerator> createGenerators(GraphModel model) throws Exception
+    private  HashMap<String,IGenerator> createGenerators(GraphModel model) throws Exception
     {
         // Мапа генераторв
         HashMap<String,IGenerator> generators = new HashMap<>();
@@ -148,26 +157,47 @@ public class GTDGenerator {
         return generators;
     }
 
-    private static void createGeneratorsForElement( GraphElementDescription eld, HashMap<String,IGenerator> generators ) throws Exception{
+    private void createGeneratorsForElement( GraphElementDescription eld, HashMap<String,IGenerator> generators ) throws Exception{
         Set<String> names = eld.getProperties().keySet();
         for( String name : names )
         {
             GraphObjectProperty gep = eld.getProperties().get( name );
-            String hash = GeneratorUtils.makeHash( gep.generatorClassName + gep.generatorParams );
+            String className = getGeneratorClassName( gep.generatorName);
+
+            String hash = GeneratorUtils.makeHash( className + gep.generatorParams );
             gep.generatorID = hash;
             if( generators.containsKey( hash ) )
                 continue;
             else {
-                IGenerator gen = createGenerator( gep.generatorClassName, gep.generatorParams );
+                IGenerator gen = createGenerator( className, gep.generatorParams );
                 generators.put( hash, gen );
             }
         }
     }
 
-    private static IGenerator createGenerator(String name, String params) throws Exception
+    /**
+     * Получает имя класса генератора. Сделано чтобы можно было использовать псевдонимы для встроенных генераторов
+     * @param generatorName
+     * @return
+     */
+    private String getGeneratorClassName(String generatorName)
+    {
+        String className = generatorName;
+        // Это встроенный генератор?
+        for( GeneratorAlias alias : GeneratorAlias.values() )
+            if( generatorName.equals( alias.toString() )) {
+                className = alias.className();
+                break;
+            }
+        return className;
+    }
+
+    private IGenerator createGenerator(String name, Map<String,String> params) throws Exception
     {
         IGenerator gen = ( IGenerator ) Class.forName( name ).newInstance();
-        gen.setParamString( params );
+        gen.setParams( config, params);
         return gen;
     }
+
+
 }

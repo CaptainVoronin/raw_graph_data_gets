@@ -6,14 +6,14 @@ import java.util.Random;
 /**
  * Генератора целых чисел внутри заданного диапазона
  */
-public class RandomNumberGenerator implements IGenerator
+public class IntGenerator implements IGenerator
 {
     int min;
     int max;
 
     final static Random rand = new Random();
 
-    public RandomNumberGenerator(){
+    public IntGenerator(){
         min = 1;
         max = 100;
     };
@@ -24,8 +24,7 @@ public class RandomNumberGenerator implements IGenerator
     }
 
     @Override
-    public void setParamString(String rawParams) throws Exception{
-        Map<String,String> params = GeneratorUtils.parseParams( rawParams );
+    public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
         String dummy = params.get( "min" );
         if( dummy != null )
             min = Integer.parseInt( dummy );

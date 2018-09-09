@@ -17,9 +17,8 @@ public class NameGenerator implements IGenerator
     List<String> femaleSurNames;
 
     @Override
-    public void setParamString(String rawParams) throws Exception
+    public void setParams(Map<String, String> config, Map<String, String> params) throws Exception
     {
-        Map<String, String> params = GeneratorUtils.parseParams( rawParams );
         String buff = params.get( maleNameDict );
 
         if( buff == null )
@@ -62,14 +61,14 @@ public class NameGenerator implements IGenerator
             surnames = maleSurNames;
         }
 
-        String name = names.get( RandomNumberGenerator.getInt( 0, names.size() - 1 ) );
-        String surname = surnames.get( RandomNumberGenerator.getInt( 0, surnames.size() - 1 ) );
+        String name = names.get( IntGenerator.getInt( 0, names.size() - 1 ) );
+        String surname = surnames.get( IntGenerator.getInt( 0, surnames.size() - 1 ) );
         return name + " " + surname;
     }
 
     private boolean getGender()
     {
-        int res = RandomNumberGenerator.getInt( 0, 5 );
+        int res = IntGenerator.getInt( 0, 5 );
         return res <= 2;
     }
 }

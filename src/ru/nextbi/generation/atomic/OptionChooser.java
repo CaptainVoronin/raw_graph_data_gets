@@ -16,8 +16,7 @@ public class OptionChooser implements IGenerator
     }
 
     @Override
-    public void setParamString(String rawParams) throws Exception{
-      Map<String, String> params = GeneratorUtils.parseParams( rawParams );
+    public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
       if( !params.containsKey( "set" ) )
           throw new Exception( "Options must be set");
       String[] ops = params.get( "set" ).split( "," );

@@ -6,9 +6,8 @@ public class LongIDGenerator implements IIDGenerator {
     long initial;
     long current;
     @Override
-    public void setParamString(String rawParams) throws Exception{
+    public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
         initial = 0L;
-        Map< String, String > params = GeneratorUtils.parseParams( rawParams );
         String buff;
         if( ( buff = params.get( "initial" ) ) != null )
             initial = Long.parseLong(buff);

@@ -13,9 +13,8 @@ public class DateTimeGenerator implements IGenerator{
     SimpleDateFormat formatter;
 
     @Override
-    public void setParamString(String rawParams) throws Exception
+    public void setParams(Map<String, String> config, Map<String, String> params) throws Exception
     {
-        Map<String, String> params = GeneratorUtils.parseParams( rawParams );
         end = Calendar.getInstance().getTime();
         String format = params.getOrDefault( "format", "dd.MM.yyyy HH:mm" );
         formatter = new SimpleDateFormat( format );
