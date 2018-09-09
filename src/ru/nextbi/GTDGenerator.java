@@ -90,6 +90,7 @@ public class GTDGenerator {
         try {
             HashMap<String, IGenerator> generators = createGenerators( model );
             Graph graph = GraphFactory.createGraph( dir, model, generators );
+            GraphFactory.createAndWriteEdges( dir, graph, model, generators );
             writeVertices( dir, model, graph );
         }
         catch( Exception e )
@@ -109,6 +110,7 @@ public class GTDGenerator {
             String filename = vd.getClassName() + ".csv";
             VertexCSVWriter vw = new VertexCSVWriter( dir, filename, ',' );
             vw.write( vd, vertices  );
+            vertices.clear();
         }
     }
 

@@ -19,12 +19,12 @@ public class TEdgeCSVWriter {
 
     public TEdgeCSVWriter( File targetDir, TEdgeDescription ted, char delimiter ) throws IOException {
         dir = targetDir;
-        this.filename = ted.getClassName() + File.separator + ".csv";
+        this.filename = targetDir.getPath() + File.separator + ted.getClassName() + ".csv";
         this.delimiter = delimiter;
         this.ted = ted;
         serializer = new TEdgeSerializer ();
         serializer.setDelimiter( delimiter );
-        File f = new File( dir.getPath() + File.separator + filename );
+        File f = new File( filename );
         fw = new FileWriter( f );
     }
 

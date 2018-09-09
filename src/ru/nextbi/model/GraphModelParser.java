@@ -85,7 +85,7 @@ public class GraphModelParser
                 GraphObjectProperty prop = getProperty( row );
                 props.put( prop.name, prop );
             }
-            else if( row.equalsIgnoreCase( "VERTEX_END"))
+            else if( row.equalsIgnoreCase( "T_EDGE_END"))
                 break;
         }
 

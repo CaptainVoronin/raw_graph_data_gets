@@ -40,27 +40,34 @@ public class GraphFactory
 
         System.out.println( "Resolving links" );
 
-        // Потом разрешаются все всязи типа posession
+        // Потом разрешаются все связи типа posession
         resolveLinks( graph, model );
 
         System.out.println( "Done" );
 
+        return graph;
+    }
+
+    public static void createAndWriteEdges(File dir, Graph graph, GraphModel model, HashMap< String, IGenerator> generators ) throws Exception
+    {
         System.out.println( "Generating edges" );
 
         // Потом генерятся все ребра
-        classes = model.getTEdgeDescriptionFlatList().keySet();
+        Set<String> classes = model.getTEdgeDescriptionFlatList().keySet();
 
         for( String key : classes )
         {
+            System.out.println( "Generate " + key );
             TEdgeDescription ted = model.getTEdgeDescription( key );
 
             Pair<Integer, Integer> pair = VertexGenerator.getRange( ted.getMin(), ted.getMax() );
-
+            long count = 0;
             for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ )
-                TEdgeGenerator.generate( dir, graph, model, ted, generators );
+                count += TEdgeGenerator.generate( dir, graph, model, ted, generators );
+
+            System.out.println( "" + count + " has been written" );
         }
         System.out.println( "Done" );
-        return graph;
     }
 
     private static void resolveLinks(Graph graph, GraphModel model){

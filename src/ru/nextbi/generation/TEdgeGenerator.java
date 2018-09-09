@@ -18,8 +18,9 @@ public class TEdgeGenerator {
 
     protected TEdgeGenerator(){};
 
-    public static final void generate(File dir, Graph graph, GraphModel model, TEdgeDescription ted, HashMap< String, IGenerator> generators ) throws Exception
+    public static final long generate(File dir, Graph graph, GraphModel model, TEdgeDescription ted, HashMap< String, IGenerator> generators ) throws Exception
     {
+        long count = 0;
         List<BaseVertex> fromList = graph.getVertices( ted.getFromVertex() );
         List<BaseVertex> toList = graph.getVertices( ted.getToVertex() );
 
@@ -40,9 +41,12 @@ public class TEdgeGenerator {
                 BaseTransitEdge edge = new BaseTransitEdge(vfrom, vto);
                 edge.setProperties(tedp);
                 writer.writeElement( edge );
+                count++;
             }
         }
         writer.close();
+
+        return count;
     }
 
     private static BaseVertex getRandomVertex( List<BaseVertex> array, BaseVertex notEqual )
