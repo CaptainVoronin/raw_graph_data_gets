@@ -149,7 +149,6 @@ public class GraphModelParser
         // Идем по  списку вершин
         for( String type : vs.keySet() )
         {
-
             VertexDescription vd = vs.get( type );
 
             List<ChildNodeDescriptor> children = vd.getDependent();
@@ -188,12 +187,14 @@ public class GraphModelParser
             }
         }
 
-        if( result )
-            System.out.println( "Checking complete" );
-        else
-            System.out.println( "There are errors" );
+        if( !result )
+            return result;
 
+        // Поиск циклических зависимостей
         result = checkCycles( model );
+
+        if( result )
+            System.out.println( "Model is good" );
 
         return result;
     }
@@ -222,10 +223,10 @@ public class GraphModelParser
             String chain = "";
             for( String name : vertices )
             {
-                chain += name + " ";
+                chain += name + "=>";
             }
-
-            System.out.println( "Circular dependeces found: " + chain );
+            chain = chain.substring( 0, chain.length() - 2 );
+            System.out.println( "Circular dependece found: " + chain );
         }
         return result;
     }
@@ -236,9 +237,9 @@ public class GraphModelParser
 
         for( ChildNodeDescriptor child : children )
         {
-            if( vertices.contains( child.childClassName  )) {
+            if( vertices.contains( child.childClassName )) {
                 // положить для информации
-                //vertices.add( vd.getClassName() );
+                vertices.add( child.childClassName );
                 return false;
             }
             else
