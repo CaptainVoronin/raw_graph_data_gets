@@ -9,9 +9,9 @@ VERTEX_END
 
 // Сотовые операторы
 VERTEX_START
-class: operator 
+class: operator [-1,4]
 prop: id
-prop: name ru.nextbi.generation.atomic.OptionChooser set=Билайн,МТС,Megafon,Tele2
+prop: name ru.nextbi.generation.atomic.CircleSet set=Билайн,МТС,Megafon,Tele2
 VERTEX_END
 
 // Скайп
@@ -46,7 +46,7 @@ prop: number ru.nextbi.generation.atomic.StringGenerator
 VERTEX_END
 
 T_EDGE_START
-class: whats_app_message [0,100]
+class: whats_app_message [0,10]
 from: WhatsApp
 to: WhatsApp
 prop: id
