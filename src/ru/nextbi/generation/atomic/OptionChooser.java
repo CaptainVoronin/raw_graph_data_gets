@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class OptionChooser implements IGenerator
 {
-    List<String> options;
+    protected List<String> options;
     Random rand;
     public OptionChooser()
     {
