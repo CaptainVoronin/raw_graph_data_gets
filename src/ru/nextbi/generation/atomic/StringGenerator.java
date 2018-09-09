@@ -21,7 +21,11 @@ public class StringGenerator implements IGenerator
 
     @Override
     public void setParams(Map<String, String> config, Map<String, String> params) throws Exception
-    {};
+    {
+        String buff = params.get( "length" );
+        if( buff != null )
+            length = Integer.parseInt( buff );
+    };
 
     @Override
     public String getValue()
