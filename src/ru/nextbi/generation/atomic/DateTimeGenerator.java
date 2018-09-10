@@ -42,4 +42,9 @@ public class DateTimeGenerator implements IGenerator{
         dt.setTime( res );
         return formatter.format( dt );
     }
+
+    @Override
+    public void initialize() throws Exception{
+
+    }
 }

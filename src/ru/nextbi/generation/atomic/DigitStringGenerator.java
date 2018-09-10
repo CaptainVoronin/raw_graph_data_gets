@@ -23,4 +23,9 @@ public class DigitStringGenerator implements IGenerator
     {
         return StringGenerator.randomNumeric( length );
     }
+
+    @Override
+    public void initialize() throws Exception{
+
+    }
 }

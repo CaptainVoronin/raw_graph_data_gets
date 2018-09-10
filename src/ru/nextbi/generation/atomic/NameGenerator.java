@@ -66,6 +66,11 @@ public class NameGenerator implements IGenerator
         return name + " " + surname;
     }
 
+    @Override
+    public void initialize() throws Exception{
+
+    }
+
     private boolean getGender()
     {
         int res = IntGenerator.getInt( 0, 5 );

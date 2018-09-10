@@ -62,4 +62,9 @@ public class DictionarySet implements IGenerator
         else
             return StringGenerator.randomAlphaNumeric( 10 );
     }
+
+    @Override
+    public void initialize() throws Exception{
+
+    }
 }

@@ -38,4 +38,9 @@ public class IntGenerator implements IGenerator
     public String getValue(){
         return Integer.toString( getInt( min, max ) );
     }
+
+    @Override
+    public void initialize() throws Exception{
+
+    }
 }

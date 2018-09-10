@@ -13,4 +13,9 @@ public class UUIDIDGenerator implements  IIDGenerator {
     public String getValue(){
         return UUID.randomUUID().toString();
     }
+
+    @Override
+    public void initialize() throws Exception{
+
+    }
 }

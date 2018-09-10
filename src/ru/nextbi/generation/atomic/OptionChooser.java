@@ -33,4 +33,9 @@ public class OptionChooser implements IGenerator
         else
             return options.get( rand.nextInt( options.size() ));
     }
+
+    @Override
+    public void initialize() throws Exception{
+
+    }
 }

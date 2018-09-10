@@ -13,4 +13,9 @@ public class PhoneNumberGenerator implements IGenerator{
     {
         return StringGenerator.randomNumeric(11);
     }
+
+    @Override
+    public void initialize() throws Exception{
+
+    }
 }

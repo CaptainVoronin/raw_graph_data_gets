@@ -19,4 +19,9 @@ public class LongIDGenerator implements IIDGenerator {
     public String getValue(){
         return Long.toString( ++current );
     }
+
+    @Override
+    public void initialize() throws Exception{
+
+    }
 }

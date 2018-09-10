@@ -33,6 +33,11 @@ public class StringGenerator implements IGenerator
         return randomAlphaNumeric( length );
     }
 
+    @Override
+    public void initialize() throws Exception{
+
+    }
+
     static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     static final String NUMERIC_STRING = "0123456789";
 
