@@ -25,7 +25,7 @@ link: bank
 prop: id long_id()
 prop: name digit_string (length=24)
 prop: currency option_chooser (set=USD,EU,RU,GBP)
-prop: created datetime (start=01.01.2014, end=31.09.2018, format=dd.MM.yyyy)
+prop: created datetime (start=01.01.2014, end=31.09.2018, in-format=dd.MM.yyyy, out-format="dd.MM.yyyy HH:mm:ss")
 VERTEX_END
 
 // Отделы в организации
@@ -50,7 +50,7 @@ VERTEX_END
 VERTEX_START
 class: email
 prop: id long_id()
-prop: address email()
+prop: address email( name-file=eng-words.txt, servers="gmail.com,yandex.ru,mail.ru,yahoo.com,rambler.ru,nextbi.ru,infosec.ru")
 VERTEX_END
 
 T_EDGE_START
@@ -68,10 +68,8 @@ from: account
 to: account
 prop: id uuid ()
 prop: amount number ( min=100, max=1000000000 )
-prop: send_date datetime (start=01.01.2018, end=31.09.2018, format=dd.MM.yyyy)
+prop: send_date datetime (start=01.01.2018, end=31.09.2018, in-format=dd.MM.yyyy, out-format="dd.MM.yyyy HH:mm:ss")
 T_EDGE_END
 
 CONFIG_START
-// Словарь мужских имен
-male-name-dict=male-names.txt
 CONFIG_END
