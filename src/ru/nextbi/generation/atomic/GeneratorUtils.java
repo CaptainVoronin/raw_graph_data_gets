@@ -62,7 +62,23 @@ public final class GeneratorUtils
         return new String(digest.digest());
     }
 
+    public static String makeHash( Map<String, String> params ) throws NoSuchAlgorithmException{
+
+        if( digest == null )
+            digest = MessageDigest.getInstance( "MD5" );
+
+        StringBuilder sb = new StringBuilder();
+
+        for( String key : params.keySet() )
+            sb.append( key ).append( params.get( key ) );
+
+        digest.update( sb.toString().getBytes());
+        return new String(digest.digest());
+    }
+
+
     public static List<String> readDictionary( String path ) throws IOException{
+
             File f = new File( path );
             if( !f.exists() )
                 throw new IOException( "Dictionary file not found" );
