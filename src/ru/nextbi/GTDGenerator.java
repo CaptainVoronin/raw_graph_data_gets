@@ -13,10 +13,8 @@ import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class GTDGenerator
 {
@@ -36,6 +34,11 @@ public class GTDGenerator
         Option output = new Option("o", "outdir", true, "output directory");
         output.setRequired(true);
         ops.addOption(output);
+
+        Option clear = new Option("c", "clear", false, "clear target directory");
+        output.setRequired(true);
+        ops.addOption(clear);
+
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -73,16 +76,42 @@ public class GTDGenerator
                 System.exit( 1 );
             }
 
+            if( cmd.hasOption( "clear" ))
+            {
+                clearTargerDir( dir );
+            }
+
             String rawDesc = new String(Files.readAllBytes(Paths.get(schemeFile)));
 
             GTDGenerator gen = new GTDGenerator();
 
         try {
+
+            Date start = Calendar.getInstance().getTime();
+            SimpleDateFormat fmt = new SimpleDateFormat( "dd.MM.yyyy HH:mm:ss" );
+            String buff = fmt.format( start );
+
+            System.out.println( buff );
             gen.generateGraph( rawDesc, dir );
+
+            Date end = Calendar.getInstance().getTime();
+            buff = fmt.format( end );
+            System.out.println( buff );
+            System.out.println( "It has been done within " + (( end.getTime() - start.getTime() ) /1000 ) + " seconds" );
+
         } catch( Exception e ) {
             e.printStackTrace();
         }
+    }
 
+    private static void clearTargerDir(File dir){
+        File[] items = dir.listFiles();
+        System.out.println( "Clear target directory" );
+        for( File file : items )
+        {
+            file.delete();
+        }
+        System.out.println( "Done" );
     }
 
     void generateGraph( String rawDescription, File dir ) throws Exception{

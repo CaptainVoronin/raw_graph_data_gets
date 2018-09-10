@@ -302,14 +302,34 @@ public class GraphModelParser
         vd.addLink( val );
     }
 
-    private static void parseClassString( GraphElementDescription eld , String row)
-    {
-        String buff = getValueString(row).trim();
-        String[] parts = buff.split( " " );
-        eld.setClassName( parts[0].trim() );
-        Pair<Integer, Integer> range = getRange( row );
-        eld.setMin( range.getKey().intValue() );
-        eld.setMax( range.getValue().intValue() );
+    private static void parseClassString( GraphElementDescription eld , String row) throws Exception{
+        Pattern p = Pattern.compile( "class\\s*:\\s*([a-zA-Z][a-zA-Z0-9_]*)\\s*(\\[\\s*(([-0-9]+)\\s*,\\s*([-0-9]+))\\s*\\])*");
+        Matcher m = p.matcher( row.trim() );
+        if( m.find() )
+        {
+//            for( int i = 0; i <=  m.groupCount(); i++ )
+//                System.out.println( "#" + i + " " + m.group( i ) );
+
+            // Имя класса
+            if( m.group( 1 ) != null )
+                eld.setClassName( m.group( 1 ).trim() );
+
+            // У подчиненных вершин может быть не задано количество экземпляров для генерации
+            if( m.group( 4 ) != null && m.group( 5 ) != null  )
+            {
+                try {
+                    eld.setMin(Integer.parseInt(m.group(4)));
+                    eld.setMax(Integer.parseInt(m.group(5)));
+                } catch( Exception e )
+                {
+                    System.out.println( "Incorrect class declaration " + row );
+                    throw e;
+                }
+            }
+        }
+        else
+            throw new Exception( "Incorrect class declaration " + row );
+
     }
 
     private static void parseOwnStatement(VertexDescription vd, String row)
