@@ -19,10 +19,16 @@ public class OptionChooser extends AbstractGenerator
     public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
       if( !params.containsKey( "set" ) )
           throw new Exception( "Options must be set");
+
       String[] ops = params.get( "set" ).split( "," );
       options = new ArrayList<String>( );
       for( int i = 0; i < ops.length; i++ )
-          options.add( ops[i] );
+          options.add( ops[i].trim() );
+
+      if( options.size() == 0 )
+          throw new Exception( "Error. Set contains no elements" );
+      else if ( options.size() == 1 )
+          System.out.println( "Warning. Set contains only one element " + options.get( 0 ));
     }
 
     @Override
@@ -31,6 +37,6 @@ public class OptionChooser extends AbstractGenerator
         if( options.size() == 1 )
             return options.get(0);
         else
-            return options.get( rand.nextInt( options.size() ));
+            return options.get( rand.nextInt( options.size() - 1 ));
     }
 }
