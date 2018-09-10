@@ -166,7 +166,9 @@ public class GTDGenerator
             GraphObjectProperty gep = eld.getProperties().get( name );
             String className = getGeneratorClassName( gep.generatorName);
 
-            String hash = GeneratorUtils.makeHash( className + gep.generatorParams );
+            gep.generatorParams.put( "class", gep.generatorName );
+            String hash = GeneratorUtils.makeHash( gep.generatorParams );
+            gep.generatorParams.remove( "class" );
             gep.generatorID = hash;
             if( generators.containsKey( hash ) )
                 continue;
@@ -200,6 +202,5 @@ public class GTDGenerator
         gen.setParams( config, params);
         return gen;
     }
-
 
 }
