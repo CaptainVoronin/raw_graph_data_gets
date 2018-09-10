@@ -174,6 +174,7 @@ public class GTDGenerator
                 continue;
             else {
                 IGenerator gen = createGenerator( className, gep.generatorParams );
+                gen.initialize();
                 generators.put( hash, gen );
             }
         }
