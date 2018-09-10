@@ -6,7 +6,7 @@ import java.util.Map;
 public interface IGenerator
 {
     void setParams(Map<String, String> config, Map<String, String> params) throws Exception;
-    String getValue() throws IOException, DictionaryNotInitiaqlizedException;
+    String getValue() throws Exception;
     void initialize() throws Exception;
-    void unInialize();
+    void unInialize() throws IOException;
 }

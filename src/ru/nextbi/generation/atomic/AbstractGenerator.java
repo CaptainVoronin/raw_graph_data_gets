@@ -1,5 +1,7 @@
 package ru.nextbi.generation.atomic;
 
+import java.io.IOException;
+
 public abstract class AbstractGenerator implements IGenerator{
 
     @Override
@@ -8,7 +10,7 @@ public abstract class AbstractGenerator implements IGenerator{
     }
 
     @Override
-    public void unInialize(){
+    public void unInialize() throws IOException {
 
     }
 }

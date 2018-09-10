@@ -11,53 +11,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class DictionarySet implements IGenerator
-{
-    Dictionary dictionary;
-    boolean noCash;
-
-    public DictionarySet()
-    {
-        noCash = true;
-    }
+public class DictionarySet extends BaseDictionaryGenerator {
 
     @Override
     public void setParams(Map<String, String> config, Map<String, String> params) throws Exception
     {
-        String buff = params.get( "noCash" );
-        if( buff != null )
-            noCash = !Boolean.parseBoolean( buff );
-        else if( config.containsKey( GTDGenerator.CASH_DEFAULT ) )
-                noCash = !Boolean.parseBoolean( config.get( GTDGenerator.CASH_DEFAULT ) );
-        else
-            noCash = false;
-
+        super.setParams( config, params );
 
         String path = params.get( "dictionary" );
         if( path != null )
         {
             path = GeneratorUtils.makeAbsolutePath( config.get(GTDGenerator.CURRENT_DIR_KEY  ), path );
-            dictionary = new Dictionary( path, noCash );
+            addDictionary( path );
         }
     }
 
     @Override
-    public String getValue() throws IOException, DictionaryNotInitiaqlizedException{
-        return dictionary.getRndValue();
-    }
-
-    @Override
-    public void initialize() throws Exception{
-        dictionary.initialize();
-    }
-
-    @Override
-    public void unInialize(){
-        if( dictionary != null )
-            try {
-                dictionary.close();
-            } catch( IOException e ) {
-                e.printStackTrace();
-            }
+    public String getValue() throws Exception {
+        return getDictionary().getRndValue();
     }
 }

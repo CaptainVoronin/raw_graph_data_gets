@@ -3,11 +3,10 @@ package ru.nextbi.generation.atomic;
 import ru.nextbi.GTDGenerator;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
-
-public class NameGenerator implements IGenerator
+public class NameGenerator extends BaseDictionaryGenerator
 {
     static final String maleNameDict = "male-names";
     static final String maleSurameDict = "male-surnames";
@@ -16,8 +15,8 @@ public class NameGenerator implements IGenerator
     static final String CASH_KEY = "noCash";
 
     Dictionary maleNames, maleSurNames, femaleNames, femaleSurNames;
-    String maleNamesFile, maleSurNamesFile, femaleNamesFile, femaleSurNamesFile;
-    boolean maleNamesNoCash, maleSurNamesNoCash, femaleNamesNoCash, femaleSurNamesNoCash;
+    //String maleNamesFile, maleSurNamesFile, femaleNamesFile, femaleSurNamesFile;
+    boolean maleNamesNoCash, maleSurNamesNoCash, femaleNamesNoCash, femaleSurnamesNoCash;
     boolean noCashDefault;
 
     @Override
@@ -30,51 +29,46 @@ public class NameGenerator implements IGenerator
         else
             noCashDefault = false;
 
-        String buff = params.get( maleNameDict );
-        if( buff == null )
-            throw new Exception ("Male names dictionary is not set" );
+        String buff = params.get( CASH_KEY );
 
-        maleNamesFile = GeneratorUtils.makeAbsolutePath( currentDir, buff );
-
-        buff = params.get( maleSurameDict );
-
-        if( buff == null )
-            throw new Exception ("Male surnames dictionary is not set" );
-
-        maleSurNamesFile = GeneratorUtils.makeAbsolutePath( currentDir, buff );
-
-        buff = params.get( femaleNameDict );
-        if( buff == null )
-            throw new Exception ( "Female names dictionary is not set" );
-
-        femaleNamesFile = GeneratorUtils.makeAbsolutePath( currentDir, buff );
-
-        buff = params.get( femaleSurameDict );
-        if( buff == null )
-            throw new Exception ( "Female surnames dictionary is not set" );
-
-        femaleSurNamesFile = GeneratorUtils.makeAbsolutePath( currentDir, buff );
-
-        buff = params.get( CASH_KEY );
-
+        Map<String, Boolean> noCashFlags;
         if( buff == null ) {
-            maleNamesNoCash = maleSurNamesNoCash = femaleNamesNoCash = femaleSurNamesNoCash = noCashDefault;
+            noCashFlags = new HashMap<>();
+            noCashFlags.put( maleNameDict, noCashDefault );
+            noCashFlags.put( maleSurameDict, noCashDefault );
+            noCashFlags.put( femaleSurameDict, noCashDefault);
+            noCashFlags.put( femaleNameDict, noCashDefault );
         }
         else
-            parseCashParam( buff );
+            noCashFlags = parseCashParam( buff );
+
+        String[] dNames = { maleNameDict, maleSurameDict, femaleNameDict, femaleSurameDict};
+
+        for( String name : dNames )
+        {
+            buff = params.get(name);
+            if (buff == null)
+                throw new Exception("Dictionary for " + name + " is not set");
+            String filename = GeneratorUtils.makeAbsolutePath( currentDir, buff);
+            Dictionary d = new Dictionary( filename, noCashFlags.get( name ) );
+            addDictionary( name, d );
+        }
     }
 
-    private void parseCashParam(String buff){
+    private Map<String, Boolean> parseCashParam(String buff){
+
+        Map<String, Boolean> noCashFlags = new HashMap<>();
+
         String[] items = buff.split( ",");
 
         // Кэшировать все словри
         if( items[0].trim().equals( "all" ) )
-            maleNamesNoCash = maleSurNamesNoCash = femaleNamesNoCash = femaleSurNamesNoCash = false;
+            maleNamesNoCash = maleSurNamesNoCash = femaleNamesNoCash = femaleSurnamesNoCash = false;
         else if( items[0].trim().equals( "none" ) ) // не кэшировать ни одного
-            maleNamesNoCash = maleSurNamesNoCash = femaleNamesNoCash = femaleSurNamesNoCash = true;
+            maleNamesNoCash = maleSurNamesNoCash = femaleNamesNoCash = femaleSurnamesNoCash = true;
         else
         {
-            maleNamesNoCash = maleSurNamesNoCash = femaleNamesNoCash = femaleSurNamesNoCash = noCashDefault;
+            maleNamesNoCash = maleSurNamesNoCash = femaleNamesNoCash = femaleSurnamesNoCash = noCashDefault;
             for( String key : items )
                 if( key.trim().equals( maleNameDict ) )
                     maleNamesNoCash = false;
@@ -83,13 +77,17 @@ public class NameGenerator implements IGenerator
                 else if( key.trim().equals( femaleNameDict ) )
                     femaleNamesNoCash = false;
                 else if( key.trim().equals( femaleSurameDict ) )
-                    femaleSurNamesNoCash = false;
+                    femaleSurnamesNoCash = false;
                 else
                 {
                     System.out.println( "Unknown noCash directive " + key.trim() );
                 }
         }
-
+        noCashFlags.put( maleNameDict, maleNamesNoCash );
+        noCashFlags.put( maleSurameDict, maleSurNamesNoCash );
+        noCashFlags.put( femaleSurameDict, femaleSurnamesNoCash);
+        noCashFlags.put( femaleNameDict, femaleNamesNoCash );
+        return noCashFlags;
     }
 
     @Override
@@ -97,13 +95,13 @@ public class NameGenerator implements IGenerator
         Dictionary names, surnames;
         if( !getGender() )
         {
-            names = femaleNames;
-            surnames = femaleSurNames;
+            names = getDictionary( femaleNameDict );
+            surnames = getDictionary( femaleSurameDict );
         }
         else
         {
-            names = maleNames;
-            surnames = maleSurNames;
+            names = getDictionary( maleNameDict );
+            surnames = getDictionary( maleSurameDict );
         }
 
         String name = names.getRndValue(  );
@@ -111,45 +109,9 @@ public class NameGenerator implements IGenerator
         return name + " " + surname;
     }
 
-    @Override
-    public void initialize() throws Exception{
-        maleNames = new Dictionary( maleNamesFile, maleNamesNoCash );
-        maleNames.initialize();
-        maleSurNames = new Dictionary( maleSurNamesFile, maleSurNamesNoCash );
-        maleSurNames.initialize();
-        femaleNames = new Dictionary( femaleNamesFile, femaleNamesNoCash );
-        femaleNames.initialize();
-        femaleSurNames = new Dictionary( femaleSurNamesFile, femaleSurNamesNoCash );
-        femaleSurNames.initialize();
-    }
-
-    @Override
-    public void unInialize()
-    {
-        try {
-            if( maleNames != null )
-                maleNames.close();
-
-            if( maleSurNames != null )
-                maleSurNames.close();
-
-            if( femaleNames != null )
-                femaleNames.close();
-
-            if( femaleSurNames != null )
-                femaleSurNames.close();
-
-        }catch( Exception e )
-        {
-            e.printStackTrace();
-        }
-    }
-
     private boolean getGender()
     {
         int res = IntGenerator.getInt( 0, 5 );
         return res <= 2;
     }
-
-
 }

@@ -1,5 +1,8 @@
 package ru.nextbi.generation.atomic;
 
+
+import java.io.IOException;
+
 public class CyclicSet extends OptionChooser {
     int counter ;
 
@@ -9,12 +12,12 @@ public class CyclicSet extends OptionChooser {
         counter = 0;
     }
     @Override
-    public String getValue()
-    {
-        if( counter >= options.size() - 1 )
+    public String getValue() throws IOException, DictionaryNotInitiaqlizedException {
+
+        if( counter >= options.getSize() - 1 )
             counter = -1;
 
-        return options.get( ++counter );
+        return options.getValue( ++counter );
     }
 
 }

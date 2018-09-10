@@ -1,42 +1,35 @@
 package ru.nextbi.generation.atomic;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.io.IOException;
+import java.util.*;
 
-public class OptionChooser extends AbstractGenerator
+// TODO: Надо приделать к нему словарь и слить с генератором CyclicSet, они отличаются только getValue()
+public class OptionChooser extends BaseDictionaryGenerator
 {
-    protected List<String> options;
-    Random rand;
+    protected Dictionary options;
+    //Random rand;
     public OptionChooser()
     {
-        options = null;
-        rand = new Random();
     }
 
     @Override
     public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
-      if( !params.containsKey( "set" ) )
-          throw new Exception( "Options must be set");
-
-      String[] ops = params.get( "set" ).split( "," );
-      options = new ArrayList<String>( );
-      for( int i = 0; i < ops.length; i++ )
-          options.add( ops[i].trim() );
-
-      if( options.size() == 0 )
-          throw new Exception( "Error. Set contains no elements" );
-      else if ( options.size() == 1 )
-          System.out.println( "Warning. Set contains only one element " + options.get( 0 ));
+      super.setParams( config, params );
+      if( params.containsKey( "set" ) ) {
+          String[] ops = params.get("set").split(",");
+          options = new Dictionary( Arrays.asList( ops ) );
+          if (options.getSize() == 0)
+              throw new Exception("Error. Set contains no elements");
+          else if (options.getSize() == 1)
+              System.out.println("Warning. Set contains only one element " + options.getValue(0));
+      }
     }
 
     @Override
-    public String getValue()
-    {
-        if( options.size() == 1 )
-            return options.get(0);
+    public String getValue() throws IOException, DictionaryNotInitiaqlizedException {
+        if( options.getSize() == 1 )
+            return options.getValue(0);
         else
-            return options.get( rand.nextInt( options.size() - 1 ));
+            return options.getRndValue( );
     }
 }
