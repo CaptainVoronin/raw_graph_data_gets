@@ -6,7 +6,7 @@ import java.util.Random;
 /**
  * Генератора целых чисел внутри заданного диапазона
  */
-public class IntGenerator implements IGenerator
+public class IntGenerator extends AbstractGenerator
 {
     int min;
     int max;
@@ -39,8 +39,4 @@ public class IntGenerator implements IGenerator
         return Integer.toString( getInt( min, max ) );
     }
 
-    @Override
-    public void initialize() throws Exception{
-
-    }
 }

@@ -2,7 +2,7 @@ package ru.nextbi.generation.atomic;
 
 import java.util.Map;
 
-public class PhoneNumberGenerator implements IGenerator{
+public class PhoneNumberGenerator extends AbstractGenerator{
     @Override
     public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
 
@@ -14,8 +14,4 @@ public class PhoneNumberGenerator implements IGenerator{
         return StringGenerator.randomNumeric(11);
     }
 
-    @Override
-    public void initialize() throws Exception{
-
-    }
 }

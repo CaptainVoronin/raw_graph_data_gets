@@ -21,14 +21,21 @@ public class EMailAddressGenerator implements IGenerator
     public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
 
         if( !params.containsKey( CASH_KEY ) )
-            noCash = Boolean.parseBoolean( params.get( CASH_KEY ) );
+            noCash = !Boolean.parseBoolean( params.get( CASH_KEY ) );
         else
-            noCash = true;
+        {
+            String buff = config.get( GTDGenerator.CASH_DEFAULT );
+            if( buff != null )
+                noCash = !Boolean.parseBoolean( config.get( GTDGenerator.CASH_DEFAULT ) );
+            else
+                noCash = true;
+        }
 
-        if( !params.containsKey( SERVERS_KEY ) )
+
+        if( params.containsKey( SERVERS_KEY ) )
             createServers( params.get( SERVERS_KEY ) );
 
-        if( !params.containsKey( MAIL_BOX_NAME_KEY ) )
+        if( params.containsKey( MAIL_BOX_NAME_KEY ) )
             createNames( config.get(GTDGenerator.CURRENT_DIR_KEY ),  params.get( MAIL_BOX_NAME_KEY ) );
 
     }
@@ -64,7 +71,22 @@ public class EMailAddressGenerator implements IGenerator
             names.initialize();
     }
 
-    public String getAddressName(){
-        return StringGenerator.randomNumeric( 8 );
+    @Override
+    public void unInialize(){
+        try {
+            if( servers != null )
+                servers.close();
+
+            if( names != null )
+                names.close();
+        } catch( Exception e  )
+        {
+            e.printStackTrace();
+        }
+
+    }
+
+    public String getAddressName() throws IOException, DictionaryNotInitiaqlizedException{
+        return names.getRndValue();
     }
 }

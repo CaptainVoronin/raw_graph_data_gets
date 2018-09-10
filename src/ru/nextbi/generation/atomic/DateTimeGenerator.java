@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class DateTimeGenerator implements IGenerator{
+public class DateTimeGenerator  extends AbstractGenerator{
 
     Date start;
     Date end;
@@ -43,8 +43,4 @@ public class DateTimeGenerator implements IGenerator{
         return formatter.format( dt );
     }
 
-    @Override
-    public void initialize() throws Exception{
-
-    }
 }

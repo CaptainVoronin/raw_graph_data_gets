@@ -21,6 +21,8 @@ import java.util.Set;
 public class GTDGenerator
 {
     public static final String CURRENT_DIR_KEY = "current_dir";
+    public static final String CASH_DEFAULT = "cash_default";
+
     Map<String, String > config;
 
     public static void main(String[] args) throws IOException
@@ -95,7 +97,7 @@ public class GTDGenerator
         boolean result = GraphModelParser.check( model );
 
         if( !result )
-            System.exit( 1 );
+            System.exit(1);
 
         try {
 
@@ -103,6 +105,9 @@ public class GTDGenerator
             Graph graph = GraphFactory.createGraph( dir, model, generators );
             GraphFactory.createAndWriteEdges( dir, graph, model, generators );
             writeVertices( dir, model, graph );
+
+            for( String key : generators.keySet() )
+                generators.get( key ).unInialize();
         }
         catch( Exception e )
         {
@@ -200,7 +205,7 @@ public class GTDGenerator
     private IGenerator createGenerator(String name, Map<String,String> params) throws Exception
     {
         IGenerator gen = ( IGenerator ) Class.forName( name ).newInstance();
-        gen.setParams( config, params);
+        gen.setParams( config, params );
         return gen;
     }
 

@@ -3,7 +3,7 @@ package ru.nextbi.generation.atomic;
 import java.util.Map;
 import java.util.UUID;
 
-public class UUIDIDGenerator implements  IIDGenerator {
+public class UUIDIDGenerator extends AbstractGenerator{
     @Override
     public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
 

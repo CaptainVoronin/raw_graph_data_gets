@@ -2,7 +2,7 @@ package ru.nextbi.generation.atomic;
 
 import java.util.Map;
 
-public class StringGenerator implements IGenerator
+public class StringGenerator extends AbstractGenerator
 {
     public int getLength() {
         return length;

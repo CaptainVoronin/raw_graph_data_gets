@@ -28,4 +28,9 @@ public class DigitStringGenerator implements IGenerator
     public void initialize() throws Exception{
 
     }
+
+    @Override
+    public void unInialize(){
+
+    }
 }

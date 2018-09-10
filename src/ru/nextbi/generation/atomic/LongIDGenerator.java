@@ -2,7 +2,7 @@ package ru.nextbi.generation.atomic;
 
 import java.util.Map;
 
-public class LongIDGenerator implements IIDGenerator {
+public class LongIDGenerator extends AbstractGenerator{
     long initial;
     long current;
     @Override
@@ -20,8 +20,4 @@ public class LongIDGenerator implements IIDGenerator {
         return Long.toString( ++current );
     }
 
-    @Override
-    public void initialize() throws Exception{
-
-    }
 }

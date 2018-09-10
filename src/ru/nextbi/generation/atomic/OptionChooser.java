@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
-public class OptionChooser implements IGenerator
+public class OptionChooser extends AbstractGenerator
 {
     protected List<String> options;
     Random rand;
@@ -32,10 +32,5 @@ public class OptionChooser implements IGenerator
             return options.get(0);
         else
             return options.get( rand.nextInt( options.size() ));
-    }
-
-    @Override
-    public void initialize() throws Exception{
-
     }
 }
