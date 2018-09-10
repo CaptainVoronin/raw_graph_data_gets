@@ -100,42 +100,32 @@ public class GraphModelParser
     }
 
     private static int parseTEdge(String[] rows, int i, TEdgeDescription ted) throws Exception{
-        int j;
-        Map<String, GraphObjectProperty> props = new HashMap<>();
-        for( j = i; j < rows.length; j++ )
-        {
-            String row = rows[j].trim();
-            if ( row.length() == 0 )
-                continue;
-            else if (row.startsWith("//"))
-                continue;
-            else if( row.startsWith( "class" ) )
-            {
-                parseClassString( ted, row );
+        int j = 0;
+            Map<String, GraphObjectProperty> props = new HashMap<>();
+            for (j = i; j < rows.length; j++) {
+                String row = rows[j].trim();
+                if (row.length() == 0)
+                    continue;
+                else if (row.startsWith("//"))
+                    continue;
+                else if (row.startsWith("class")) {
+                    parseClassString(ted, row);
+                } else if (row.startsWith("from")) {
+                    ted.setFromVertex(getValueString(row).trim());
+                } else if (row.startsWith("to")) {
+                    ted.setToVertex(getValueString(row).trim());
+                } else if (row.startsWith("prop")) {
+                    GraphObjectProperty prop = getProperty( j, row);
+                    props.put(prop.name, prop);
+                } else if (row.equalsIgnoreCase("T_EDGE_END"))
+                    break;
             }
-            else if( row.startsWith( "from" ) )
-            {
-                ted.setFromVertex( getValueString( row ).trim() );
-            }
-            else if( row.startsWith( "to" ) )
-            {
-                ted.setToVertex( getValueString( row ).trim() );
-            }
-            else if( row.startsWith( "prop" ) )
-            {
-                GraphObjectProperty prop = getProperty( row );
-                props.put( prop.name, prop );
-            }
-            else if( row.equalsIgnoreCase( "T_EDGE_END"))
-                break;
-        }
 
-        if( !props.containsKey( GraphElement.KEY_ID ) )
-            throw new Exception( "A graph element must have ID property");
+            if (!props.containsKey(GraphElement.KEY_ID))
+                throw new Exception("A graph element must have ID property. Row " + j);
 
-        ted.setProperties( props );
-        return j;
-
+            ted.setProperties(props);
+            return j;
     }
 
     public static boolean check( GraphModel model )
@@ -277,7 +267,7 @@ public class GraphModelParser
             }
             else if( row.startsWith( "prop" ) )
             {
-                GraphObjectProperty prop = getProperty( row );
+                GraphObjectProperty prop = getProperty( j, row );
                 props.put( prop.name, prop );
             }
             else if( row.startsWith( "own" ) )
@@ -355,7 +345,7 @@ public class GraphModelParser
         vd.addDependent( chd );
     }
 
-    private static GraphObjectProperty getProperty(String row)
+    private static GraphObjectProperty getProperty(int rowIndex, String row)
     {
         String val = getValueString( row );
         //val = "id long_id( initial=10000 )";
@@ -363,7 +353,7 @@ public class GraphModelParser
         Matcher m = pattern_get_generator_call.matcher( val );
 
         if( !m.find() )
-            throw new IllegalArgumentException( "Property doesn't have a name " + row );
+            throw new IllegalArgumentException( "Error at line " + rowIndex + ". Incorrect syntax \"" + ( row + 1 ) + "\"" );
 
         GraphObjectProperty gProperty = new GraphObjectProperty();
         gProperty.name = m.group( 1 ).trim();
