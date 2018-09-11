@@ -22,10 +22,10 @@ public class VertexSerializer
         // Если указан родитель
         if( v.getParent() != null )
         {
-            String parentID = v.getParent().getId();
+            String parentID = v.getParent();
             if( parentID == null || parentID.trim().length() == 0 )
                 throw new Exception( "Incorrect parent id" );
-            st.append( v.getParent().getId() ).append( delimiter );
+            st.append( v.getParent() ).append( delimiter );
         }
         else if( vd.getParentClassName() != null )
             throw new Exception( "Link violation!");

@@ -2,33 +2,37 @@ package ru.nextbi.generation;
 
 import ru.nextbi.model.BaseEdge;
 import ru.nextbi.model.BaseTransitEdge;
-import ru.nextbi.model.BaseVertex;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Graph {
 
-    Map<String, List<BaseVertex>> vertices;
+    /**
+     * IDы всех вершин
+     */
+    Map<String, List<ParentChild>> verticesIDs;
     Map<String, List<BaseEdge>> edges;
-
+    Map< String, AtomicInteger > counters;
     public Graph ()
     {
-        vertices = new HashMap<>();
+        verticesIDs = new HashMap<>();
         edges = new HashMap<>();
+        counters = new HashMap< String, AtomicInteger >();
     };
 
-    public void addVertex( String type, BaseVertex v )
+    public void addVertexID( String type, ParentChild pc  )
     {
-        List<BaseVertex> vts = vertices.get( type );
+        List<ParentChild> vts = verticesIDs.get( type );
         if( vts == null ) {
-            vts = new ArrayList<BaseVertex>();
-            vertices.put( type, vts );
+            vts = new ArrayList<ParentChild>();
+            verticesIDs.put( type, vts );
+            counters.put( type, new AtomicInteger( 0 ) );
         }
-
-        vts.add( v );
+        vts.add( pc );
     }
 
     public void addEdge( String type, BaseTransitEdge e )
@@ -42,14 +46,28 @@ public class Graph {
         vts.add( e );
     };
 
-    public List<BaseVertex> getVertices( String className )
+    public ParentChild getNextIdFor( String className )
     {
-        return vertices.get( className );
+        AtomicInteger index = counters.get( className );
+        List<ParentChild> ids = getVerticesIDList( className );
+        ParentChild id = ids.get( index.getAndIncrement() );
+        return id;
+    }
+
+    public List<ParentChild> getVerticesIDList(String className )
+    {
+        return verticesIDs.get( className );
     }
 
     public List<BaseEdge> getEdges( String className )
     {
         return edges.get( className );
+    }
+
+    public static class ParentChild
+    {
+        public String parent;
+        public String child;
     }
 
 }

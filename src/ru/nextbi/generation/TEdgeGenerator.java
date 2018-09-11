@@ -1,11 +1,9 @@
 package ru.nextbi.generation;
 
 import javafx.util.Pair;
-import org.omg.CORBA.Environment;
 import ru.nextbi.generation.atomic.IGenerator;
 import ru.nextbi.model.*;
 import ru.nextbi.writers.TEdgeCSVWriter;
-import ru.nextbi.writers.TEdgeSerializer;
 
 import java.io.File;
 import java.util.HashMap;
@@ -21,8 +19,8 @@ public class TEdgeGenerator {
     public static final long generate(File dir, Graph graph, GraphModel model, TEdgeDescription ted, HashMap< String, IGenerator> generators ) throws Exception
     {
         long count = 0;
-        List<BaseVertex> fromList = graph.getVertices( ted.getFromVertex() );
-        List<BaseVertex> toList = graph.getVertices( ted.getToVertex() );
+        List<Graph.ParentChild> fromList = graph.getVerticesIDList( ted.getFromVertex() );
+        List<Graph.ParentChild> toList = graph.getVerticesIDList( ted.getToVertex() );
 
         TEdgeCSVWriter writer = new TEdgeCSVWriter( dir, ted, ',' );
 
@@ -30,15 +28,15 @@ public class TEdgeGenerator {
         writer.writeHeader( );
 
         // Бежим по всем вершинам from и добавляем ребра
-        for( BaseVertex vfrom : fromList )
+        for( Graph.ParentChild vfrom : fromList )
         {
-            BaseVertex vto = getRandomVertex( toList, vfrom );
+            String vto = getRandomVertex( toList, vfrom.child );
             Pair<Integer, Integer> pair = VertexGenerator.getRange(ted.getMin(), ted.getMax());
 
             for( int i = pair.getKey().intValue(); i < pair.getValue().intValue(); i++ ) {
 
                 HashMap<String, String> tedp = VertexGenerator.generateProps(generators, ted);
-                BaseTransitEdge edge = new BaseTransitEdge(vfrom, vto);
+                BaseTransitEdge edge = new BaseTransitEdge(vfrom.child, vto);
                 edge.setProperties(tedp);
                 writer.writeElement( edge );
                 count++;
@@ -49,16 +47,16 @@ public class TEdgeGenerator {
         return count;
     }
 
-    private static BaseVertex getRandomVertex( List<BaseVertex> array, BaseVertex notEqual )
+    private static String getRandomVertex( List<Graph.ParentChild> array, String notEqual )
     {
-        BaseVertex v;
+        Graph.ParentChild v = null;
         do {
             v = getRandomElement( array );
-        } while( v == notEqual );
-        return v;
+        } while( v.child.equals(  notEqual ) );
+        return v.child;
     }
 
-    private static BaseVertex getRandomElement(List<BaseVertex> array)
+    private static Graph.ParentChild getRandomElement(List<Graph.ParentChild> array)
     {
         if( array.size() < 2 )
             throw new IllegalArgumentException( "List size too small " );

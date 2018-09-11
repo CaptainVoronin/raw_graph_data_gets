@@ -4,18 +4,18 @@ public abstract class BaseEdge extends GraphElement
 {
     public enum EdgeKind { TRANSIT, LINK };
 
-    BaseVertex from;
-    BaseVertex to;
+    String from;
+    String to;
 
-    public void setFrom(BaseVertex from) {
+    public void setFrom(String from) {
         this.from = from;
     }
 
-    public void setTo(BaseVertex to) {
+    public void setTo(String to) {
         this.to = to;
     }
 
-    public BaseEdge(BaseVertex from, BaseVertex to)
+    public BaseEdge(String from, String to)
     {
         this.from = from;
         this.to = to;
@@ -26,12 +26,12 @@ public abstract class BaseEdge extends GraphElement
         return ELEMENT_TYPE.EDGE;
     }
 
-    public final BaseVertex getFrom()
+    public final String getFrom()
     {
         return from;
     }
 
-    public final BaseVertex getTo()
+    public final String getTo()
     {
         return to;
     }

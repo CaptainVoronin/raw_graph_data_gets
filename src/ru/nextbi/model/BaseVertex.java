@@ -7,13 +7,13 @@ import java.util.Map;
 public class BaseVertex extends GraphElement
 {
 
-    BaseVertex parent;
+    String parentID;
     Map<String, String> posessors;
 
-    public BaseVertex( BaseVertex parent )
+    public BaseVertex( String parentID )
     {
         super( );
-        this.parent = parent;
+        this.parentID = parentID;
         posessors = new HashMap<>();
     }
 
@@ -22,9 +22,9 @@ public class BaseVertex extends GraphElement
         return ELEMENT_TYPE.VERTEX;
     }
 
-    public BaseVertex getParent()
+    public String getParent()
     {
-        return parent;
+        return parentID;
     }
 
     public void addPosessor( String className, String id )

@@ -24,8 +24,8 @@ public class TEdgeSerializer
         // ID придется записать силовым методом
         //st.append( values.get( GraphElement.KEY_ID ) ).append( delimiter );
 
-        st.append( v.getFrom().getId() ).append( delimiter );
-        st.append( v.getTo().getId() ).append( delimiter );
+        st.append( v.getFrom() ).append( delimiter );
+        st.append( v.getTo() ).append( delimiter );
 
         // Свойства
         for( String name : props.keySet() )

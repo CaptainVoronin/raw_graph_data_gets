@@ -13,20 +13,30 @@ public class VertexGenerator
 {
     protected VertexGenerator(){};
 
-    public static final void generate( Graph graph, GraphModel model, VertexDescription vd, BaseVertex parent, HashMap< String, IGenerator> generators ) throws Exception
+    /**
+     * Генератся все ID всех вершин
+     * @param graph
+     * @param model
+     * @param vd
+     * @param generators
+     * @throws Exception
+     */
+    public static final void generateIDs(Graph graph, GraphModel model, VertexDescription vd, String parentId, HashMap< String, IGenerator> generators ) throws Exception
     {
         IGenerator gen;
-
-        HashMap<String, String> vp = generateProps( generators, vd );
-
+        Graph.ParentChild pc = new Graph.ParentChild();
+        //HashMap<String, String> vp = generateProps( generators, vd );
+        String id = generateID( generators, vd );
+        pc.child = id;
+        pc.parent = parentId;
         // Создаем наконец вершину
-        BaseVertex vertex = new BaseVertex( parent );
+        //BaseVertex vertex = new BaseVertex( parent );
 
         // Втыкаем туда свойства
-        vertex.setProperties( vp );
+        //vertex.setProperties( vp );
 
         // Добавляем в граф
-        graph.addVertex( vd.getClassName(), vertex );
+        graph.addVertexID( vd.getClassName(), pc );
 
         // Генерим дочерние вершины, если есть
         for ( ChildNodeDescriptor desc : vd.getDependent() )
@@ -35,12 +45,28 @@ public class VertexGenerator
 
             Pair<Integer, Integer> pair = getRange( desc.min, desc.max );
             for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ )
-                generate( graph, model, dch, vertex, generators );
+                generateIDs( graph, model, dch, id, generators );
         }
 
     }
 
-    public static HashMap<String, String> generateProps( HashMap< String, IGenerator> generators, GraphElementDescription eld) throws Exception {
+    private static String generateID(HashMap<String,IGenerator> generators, VertexDescription vd ) throws Exception {
+
+            GraphObjectProperty p = vd.getProperties().get( "id" );
+            IGenerator gen = generators.get( p.generatorID );
+            if( gen == null )
+                throw new Exception( "Generator not found for '" + p.generatorName + "'" );
+            return gen.getValue();
+    }
+
+    public static BaseVertex createVertex( Map<String, IGenerator> generators, GraphElementDescription eld, String id, String parentID ) throws Exception {
+        BaseVertex v = new BaseVertex( parentID );
+        HashMap<String, String> props = generateProps( generators, eld );
+        props.put( "id", id );
+        return v;
+    }
+
+    public static HashMap<String, String> generateProps( Map< String, IGenerator> generators, GraphElementDescription eld) throws Exception {
         IGenerator gen;
 
         HashMap<String, String> vp = new HashMap<>();
@@ -50,6 +76,9 @@ public class VertexGenerator
 
         for( String key : s )
         {
+            if( key.equalsIgnoreCase( "id") )
+                continue;
+
             GraphObjectProperty p = eld.getProperties().get( key );
 
             // Получить генератор значений для свойства

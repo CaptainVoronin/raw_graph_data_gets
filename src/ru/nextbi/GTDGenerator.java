@@ -146,17 +146,17 @@ public class GTDGenerator
 
     private void writeVertices(File dir, GraphModel model, Graph graph) throws Exception
     {
-        Map< String, VertexDescription > desc = model.getVertexDescriptions();
+        /*Map< String, VertexDescription > desc = model.getVertexDescriptions();
 
         for( String key : desc.keySet() )
         {
             VertexDescription vd = desc.get( key );
-            List<BaseVertex> vertices = graph.getVertices( vd.getClassName() );
+            List<BaseVertex> vertices = graph.getVerticesIDList( vd.getClassName() );
             String filename = vd.getClassName() + ".csv";
             VertexCSVWriter vw = new VertexCSVWriter( dir, filename, ',' );
             vw.write( vd, vertices  );
             vertices.clear();
-        }
+        }*/
     }
 
     private  HashMap<String,IGenerator> createGenerators(GraphModel model) throws Exception
