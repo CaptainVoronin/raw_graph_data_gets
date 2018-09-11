@@ -91,7 +91,7 @@ public class NameGenerator extends BaseDictionaryGenerator
     }
 
     @Override
-    public String getValue() throws IOException, DictionaryNotInitiaqlizedException{
+    public String getValue() throws IOException, ProviderNotInitiaqlizedException{
         Dictionary names, surnames;
         if( !getGender() )
         {

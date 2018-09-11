@@ -7,20 +7,28 @@ public class FileStringProvider implements  IStringProvider{
     String filename;
     RandomAccessFile file;
     int size;
+    boolean initalized;
 
     public FileStringProvider( String filename )
     {
         this.filename = filename;
         size = 0;
+        initalized = false;
     }
 
     @Override
-    public int getSize(){
+    public int getSize() throws ProviderNotInitiaqlizedException{
+        if( !initalized )
+            throw new ProviderNotInitiaqlizedException();
+
         return size;
     }
 
     @Override
-    public String getString(int index) throws IOException{
+    public String getString(int index) throws IOException, ProviderNotInitiaqlizedException{
+        if( !initalized )
+            throw new ProviderNotInitiaqlizedException();
+
         if( file == null  )
             file = new RandomAccessFile( filename, "r" );
 

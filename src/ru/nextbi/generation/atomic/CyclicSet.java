@@ -12,7 +12,7 @@ public class CyclicSet extends OptionChooser {
         counter = 0;
     }
     @Override
-    public String getValue() throws IOException, DictionaryNotInitiaqlizedException {
+    public String getValue() throws IOException, ProviderNotInitiaqlizedException{
 
         if( counter >= options.getSize() - 1 )
             counter = -1;
