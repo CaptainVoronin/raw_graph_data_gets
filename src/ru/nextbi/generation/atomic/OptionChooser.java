@@ -26,7 +26,7 @@ public class OptionChooser extends BaseDictionaryGenerator
     }
 
     @Override
-    public String getValue() throws IOException, DictionaryNotInitiaqlizedException {
+    public String getValue() throws IOException, ProviderNotInitiaqlizedException{
         if( options.getSize() == 1 )
             return options.getValue(0);
         else

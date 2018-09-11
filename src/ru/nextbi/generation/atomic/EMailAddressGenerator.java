@@ -39,7 +39,7 @@ public class EMailAddressGenerator extends BaseDictionaryGenerator {
     }
 
     @Override
-    public String getValue() throws IOException, DictionaryNotInitiaqlizedException{
+    public String getValue() throws IOException, ProviderNotInitiaqlizedException{
         String name, server;
         Dictionary servers = getDictionary( "servers" );
         Dictionary names = getDictionary(namesDKey);
