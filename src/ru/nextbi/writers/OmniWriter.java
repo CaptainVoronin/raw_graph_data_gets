@@ -43,4 +43,13 @@ public class OmniWriter{
             writers.get( className ).close();
     }
 
+    public void forget(String key)
+    {
+        VertexCSVWriter writer = writers.get( key );
+        if( writer != null ) {
+            writer.close();
+            writers.remove( key );
+            writer = null;
+        }
+    }
 }
