@@ -15,49 +15,54 @@ public class VertexCSVWriter
     File dir;
     String filename;
     char delimiter;
+    VertexSerializer vertexSerializer;
+    VertexDescription vertexDescription;
+    FileWriter fileWriter;
 
-    public VertexCSVWriter( File targetDir, String filename, char delimiter )
-    {
+    public VertexCSVWriter( File targetDir, VertexDescription vertexDescription, Map<String,String> config ) throws IOException{
         dir = targetDir;
-        this.filename = filename;
-        this.delimiter = delimiter;
+        String fileExt = config.getOrDefault( "ext", "csv" );
+        this.vertexDescription = vertexDescription;
+        this.filename = targetDir.getPath() + File.separator + vertexDescription.getClassName() + "." + fileExt;
+        this.delimiter = ( char ) config.getOrDefault( "delimiter", "," ).getBytes()[0];
+
+        vertexSerializer = new VertexSerializer();
+        vertexSerializer.setDelimiter( delimiter );
+        fileWriter = new FileWriter( this.filename  );
     }
 
-    public void write(VertexDescription vd, List<BaseVertex> vertices ) throws Exception
-    {
-        System.out.println( "Start writing " + vd.getClassName() );
-        File f = new File( dir.getPath() + "/" + filename );
-        FileWriter fw = new FileWriter( f );
-        writeHeader(  fw, vd );
-        writeElements( fw, vd, vertices );
-        fw.close();
-        System.out.println( "Done" );
+    public void writeElement( BaseVertex v) throws Exception {
+        fileWriter.write(vertexSerializer.vertexToString(vertexDescription, v));
     }
 
-    private void writeElements(FileWriter fw, VertexDescription vd, List<BaseVertex> vertices) throws Exception {
-        VertexSerializer vs = new VertexSerializer();
-        vs.setDelimiter( delimiter );
-        for( BaseVertex v : vertices )
-            fw.write(vs.vertexToString(vd, v));
-    }
+    public void writeHeader() throws IOException {
 
-    private void writeHeader(FileWriter fw, VertexDescription vd) throws IOException {
         StringBuilder st = new StringBuilder();
 
-        if( vd.getParentClassName() != null )
-            st.append( vd.getParentClassName() ).append( "_id" ).append( delimiter );
+        if( vertexDescription.getParentClassName() != null )
+            st.append( vertexDescription.getParentClassName() ).append( "_id" ).append( delimiter );
 
-        Map<String, GraphObjectProperty > props = vd.getProperties();
+        Map<String, GraphObjectProperty > props = vertexDescription.getProperties();
 
         for( String key : props.keySet() )
             st.append( props.get( key ).name ).append( delimiter );
 
-        for( String className : vd.getLinks() )
+        for( String className : vertexDescription.getLinks() )
             st.append(  className + "_id" ).append( delimiter );
 
         st.deleteCharAt( st.length() - 1 );
         st.append( '\n' );
 
-        fw.write( st.toString() );
+        fileWriter.write( st.toString() );
+    }
+
+    public void close()
+    {
+        if( fileWriter != null )
+            try {
+                fileWriter.close();
+            } catch( IOException e ) {
+                e.printStackTrace();
+            }
     }
 }

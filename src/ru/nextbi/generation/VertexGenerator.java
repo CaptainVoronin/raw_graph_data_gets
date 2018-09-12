@@ -29,11 +29,6 @@ public class VertexGenerator
         String id = generateID( generators, vd );
         pc.child = id;
         pc.parent = parentId;
-        // Создаем наконец вершину
-        //BaseVertex vertex = new BaseVertex( parent );
-
-        // Втыкаем туда свойства
-        //vertex.setProperties( vp );
 
         // Добавляем в граф
         graph.addVertexID( vd.getClassName(), pc );
@@ -61,8 +56,8 @@ public class VertexGenerator
 
     public static BaseVertex createVertex( Map<String, IGenerator> generators, GraphElementDescription eld, String id, String parentID ) throws Exception {
         BaseVertex v = new BaseVertex( parentID );
-        HashMap<String, String> props = generateProps( generators, eld );
-        props.put( "id", id );
+        v.setProperties(  generateProps( generators, eld ) );
+        v.setProperty( "id", id );
         return v;
     }
 

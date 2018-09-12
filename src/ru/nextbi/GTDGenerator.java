@@ -131,7 +131,7 @@ public class GTDGenerator
         try {
 
             HashMap<String, IGenerator> generators = createGenerators( model );
-            Graph graph = GraphFactory.createGraph( dir, model, generators );
+            Graph graph = GraphFactory.createGraph( config, dir, model, generators );
             GraphFactory.createAndWriteEdges( dir, graph, model, generators );
             writeVertices( dir, model, graph );
 

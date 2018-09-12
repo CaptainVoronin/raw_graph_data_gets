@@ -4,10 +4,12 @@ import javafx.util.Pair;
 import ru.nextbi.generation.atomic.IGenerator;
 import ru.nextbi.generation.atomic.IntGenerator;
 import ru.nextbi.model.*;
+import ru.nextbi.writers.OmniWriter;
 
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 public class GraphFactory
@@ -25,10 +27,10 @@ public class GraphFactory
             System.out.println( "Generated " + count );
         }
     }
-    public static final Graph createGraph(File dir, GraphModel model, HashMap< String, IGenerator> generators ) throws Exception
+    public static final Graph createGraph(Map<String, String> config, File dir, GraphModel model, HashMap< String, IGenerator> generators ) throws Exception
     {
         Graph graph = new Graph();
-
+        OmniWriter omniWriter = new OmniWriter( config, dir );
         // Сначала генераятся все вершины
         Set<String> classes = model.getVertexDescriptions().keySet();
 
@@ -65,35 +67,18 @@ public class GraphFactory
             for( Graph.ParentChild pc : ids )
             {
                 BaseVertex v = VertexGenerator.createVertex( generators, desc, pc.child, pc.parent );
+                //v.setProperties( VertexGenerator.generateProps( generators, desc ) );
+                //v.setProperty( "id", pc.child );
                 incCount();
                 resolveLinks( graph, desc, v );
-                //generateInstances( graph, model, generators, parent, desc.getDependent() );
+                omniWriter.write( desc, v );
             }
         }
-
+        omniWriter.closeAll();
         System.out.println( "Done" );
 
         return graph;
     }
-
-//    private static void generateInstances(Graph graph, GraphModel model, HashMap<String, IGenerator> generators, String parentID, List<ChildNodeDescriptor> dependent) throws Exception {
-//
-//        for(ChildNodeDescriptor child : dependent)
-//        {
-//            // Берем IDы и идем по ним
-//            VertexDescription desc = model.getVertexDescription( child.childClassName );
-//            List<String> ids = graph.getVerticesIDList( desc.getClassName() );
-//
-//            for( String id : ids )
-//            {
-//                BaseVertex v = VertexGenerator.createVertex( generators, desc, id, parentID );
-//                incCount();
-//                resolveLinks( graph, desc, v );
-//                generateInstances( graph, model, generators, id, desc.getDependent() );
-//            }
-//
-//        }
-//    }
 
     private static void resolveLinks(Graph graph, VertexDescription desc, BaseVertex v)
     {
@@ -126,35 +111,5 @@ public class GraphFactory
             System.out.println( "" + count + " has been written" );
         }
         System.out.println( "Done" );
-    }
-
-    private static void resolveLinks(Graph graph, GraphModel model){
-        /*Set<String> classes = model.getVertexDescriptions().keySet();
-
-        *//**
-         * Имена классов вершин, на которые надо поставить ссылки
-         *//*
-        List<String> links;
-
-        // Идкм по всем классам вершин, расставляем линки от них
-        for( String key : classes )
-        {
-            // Взять описание вершины
-            VertexDescription vd = model.getVertexDescription( key );
-            if( ( links = vd.getLinks() ).size() == 0 )
-                continue; // от данного класса вершин ссылок нет
-
-            // есть ссылки, берем все экземпляры вершин этого класса
-            List<BaseVertex> linked = graph.getVerticesIDList( vd.getClassName() );
-
-            // И идем по ним
-            for( BaseVertex vx : linked ) {
-                for( String className : links ) {
-                    List<BaseVertex> targets = graph.getVerticesIDList(className);
-                    BaseVertex target = targets.get( 0 );
-                    vx.addPosessor( className, target.getId() );
-                }
-            }
-        }*/
     }
 }

@@ -37,8 +37,9 @@ public class VertexSerializer
         // ID придется записать силовым методом
         //st.append( values.get( GraphElement.KEY_ID ) ).append( delimiter );
 
-        for( String name : props.keySet() )
-            st.append( values.get( name ) ).append( delimiter );
+        for( String name : props.keySet() ) {
+            st.append(values.get(name)).append(delimiter);
+        }
 
         Map<String, String> links = v.getPosessors();
         for( String className : vd.getLinks() )
