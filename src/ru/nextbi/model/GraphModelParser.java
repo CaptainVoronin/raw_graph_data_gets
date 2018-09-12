@@ -41,6 +41,12 @@ public class GraphModelParser
 
         String[] rows = buff.split( "\n" );
 
+        parseConfig( rows, config  );
+
+        buff = substituteVariables( config, buff );
+
+        rows = buff.split( "\n" );
+
         for( int i = 0; i < rows.length; i++ )
         {
             String row = rows[i].trim();
@@ -59,10 +65,6 @@ public class GraphModelParser
                 i = parseTEdge( rows, ++i, ted );
                 model.addTEdgeDescription( ted );
             }
-            else if(row.equalsIgnoreCase( "CONFIG_START") )
-            {
-                i = parseConfig( rows, ++i, config );
-            }
             else
                 System.out.println( "Unknown directive " + row + ". Ignored" );
         }
@@ -71,11 +73,29 @@ public class GraphModelParser
         return model;
     }
 
-    private static int parseConfig(String[] rows, int i, Map<String,String> config)
+    private static String substituteVariables(Map<String, String> config, String buff)
     {
-        int j;
-        for( j = i; j < rows.length; j++ )
+        for( String name : config.keySet() )
         {
+            if( name.startsWith( "$")) {
+                String pattern = "\\$" + name.substring(1, name.length());
+                String value = config.get( name );
+                buff = buff.replaceAll( pattern, Matcher.quoteReplacement( value ) );
+            }
+        }
+        return buff;
+    }
+
+    private static void parseConfig(String[] rows, Map<String,String> config)
+    {
+        int i = 0;
+
+        while ( !rows[i].trim().equals( "CONFIG_START") && i < rows.length )
+            i++;
+
+        for( int j = i + 1; j < rows.length; j++ )
+        {
+
             String row = rows[j].trim();
 
             if (row.length() == 0)
@@ -96,7 +116,6 @@ public class GraphModelParser
                 config.put( name, value );
             }
         }
-        return j;
     }
 
     private static int parseTEdge(String[] rows, int i, TEdgeDescription ted) throws Exception{
