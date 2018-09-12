@@ -71,7 +71,8 @@ public class VertexGenerator
 
         for( String key : s )
         {
-            if( key.equalsIgnoreCase( "id") )
+
+            if( eld.getType().equals( GraphElement.ELEMENT_TYPE.VERTEX ) && key.equalsIgnoreCase( "id") )
                 continue;
 
             GraphObjectProperty p = eld.getProperties().get( key );
