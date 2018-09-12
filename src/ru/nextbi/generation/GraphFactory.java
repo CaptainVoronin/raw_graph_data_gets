@@ -1,12 +1,15 @@
 package ru.nextbi.generation;
 
 import javafx.util.Pair;
+import ru.nextbi.GTDGenerator;
 import ru.nextbi.generation.atomic.IGenerator;
 import ru.nextbi.generation.atomic.IntGenerator;
 import ru.nextbi.model.*;
 import ru.nextbi.writers.OmniWriter;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +54,13 @@ public class GraphFactory
 
         System.out.println( "Done" );
 
+        if( config.containsKey(GTDGenerator.SAVE_IDS))
+        {
+            System.out.println( "Write IDs" );
+            saveIDs( config, dir, model, graph );
+            System.out.println( "Done" );
+        }
+
         // По готовым ID создаем и пишем экземпляры верш
         // ин
         System.out.println( "Generating vertices instances" );
@@ -67,8 +77,6 @@ public class GraphFactory
             for( Graph.ParentChild pc : ids )
             {
                 BaseVertex v = VertexGenerator.createVertex( generators, desc, pc.child, pc.parent );
-                //v.setProperties( VertexGenerator.generateProps( generators, desc ) );
-                //v.setProperty( "id", pc.child );
                 incCount();
                 resolveLinks( graph, desc, v );
                 omniWriter.write( desc, v );
@@ -79,6 +87,19 @@ public class GraphFactory
         System.out.println( "Done" );
 
         return graph;
+    }
+
+    private static void saveIDs(Map<String,String> config, File dir, GraphModel model, Graph graph) throws IOException {
+        for( String className : model.getVertexDescriptions().keySet() )
+        {
+            List<Graph.ParentChild> ids = graph.getVerticesIDList( className );
+            FileWriter fw = new FileWriter( dir.getPath() + File.separator + className + "_ids.csv" );
+            for(Graph.ParentChild pc : ids )
+            {
+                fw.write( pc.child + "\n" );
+            }
+            fw.close();
+        }
     }
 
     private static void resolveLinks(Graph graph, VertexDescription desc, BaseVertex v)

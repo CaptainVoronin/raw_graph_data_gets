@@ -20,6 +20,7 @@ public class GTDGenerator
 {
     public static final String CURRENT_DIR_KEY = "current_dir";
     public static final String CASH_DEFAULT = "cash_default";
+    public static final String SAVE_IDS = "save-ids";
 
     Map<String, String > config;
 
@@ -43,7 +44,9 @@ public class GTDGenerator
         param.setRequired(false);
         ops.addOption(param);
 
-
+        Option save_ids = new Option("a", "save-ids", false, "save vertices IDs");
+        save_ids.setRequired(false);
+        ops.addOption(save_ids);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -62,6 +65,10 @@ public class GTDGenerator
             String[] params = cmd.getOptionValues( "parameter" );
             if( params != null )
                parseInputParams( params, inputParams );
+
+            if( cmd.hasOption( "save-ids" ) ) {
+                inputParams.put(GTDGenerator.SAVE_IDS, "true");
+            }
 
             String schemeFile = cmd.getOptionValue("scheme");
             String outputDirPath = cmd.getOptionValue("outdir");
