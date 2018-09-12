@@ -1,7 +1,7 @@
 // Люди
 VERTEX_START
-class: person [-1,700000]
-own: skype [0,2]
+class: person [-1, $pCount]
+own: skype [0,$some_int]
 own: phone [1,3]
 prop: id long_id()
 prop: name human_name( male-names=male-names.txt, male-surnames=male-surnames.txt, female-names=female-names.txt, female-surnames=female-surnames.txt )
@@ -50,7 +50,7 @@ class: whats_app_message [0,10]
 from: WhatsApp
 to: WhatsApp
 prop: id long_id()
-prop: send_date datetime( start=01.01.2018, end=31.09.2018, format=dd.MM.yyyy )
+prop: send_date datetime( start=$start_date, end=$end_date, format=dd.MM.yyyy )
 T_EDGE_END
 
 T_EDGE_START
@@ -58,9 +58,13 @@ class: telegramm_message [0,10]
 from: telegramm
 to: telegramm
 prop: id long_id()
-prop: send_date datetime( start=01.01.2018, end=31.09.2018, format=dd.MM.yyyy )
+prop: send_date datetime( start=$start_date, end=$end_date, format=dd.MM.yyyy )
 T_EDGE_END
 
 CONFIG_START
+$pCount=10000
 cash_default=true
+$some_int=100
+$start_date=01.01.2018
+$end_date=31.09.2018
 CONFIG_END
