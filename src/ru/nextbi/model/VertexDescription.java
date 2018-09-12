@@ -24,9 +24,10 @@ public class VertexDescription extends GraphElementDescription
     List<String> links;
 
     public VertexDescription() {
-        super();
+        super( GraphElement.ELEMENT_TYPE.VERTEX );
         dependent = new ArrayList<>();
         links = new ArrayList<>();
+
     }
 
     public List<ChildNodeDescriptor> getDependent() {

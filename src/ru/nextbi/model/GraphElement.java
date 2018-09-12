@@ -11,6 +11,7 @@ public abstract class GraphElement
 
     public enum ELEMENT_TYPE{ VERTEX, EDGE };
 
+    ELEMENT_TYPE type;
     public Map<String, String> getProperties() {
         return properties;
     }
@@ -28,14 +29,20 @@ public abstract class GraphElement
 
     Map<String, String> properties;
 
-    public GraphElement ( )
+    public GraphElement ( ELEMENT_TYPE type )
     {
         properties = new HashMap<>();
+        this.type = type;
     }
 
     public String getId()
     {
         return getProperty( KEY_ID );
+    }
+
+    public void setId( String id )
+    {
+        properties.put( KEY_ID, id );
     }
 
     public String getProperty( String key )
@@ -47,4 +54,8 @@ public abstract class GraphElement
     {
         return properties.put( key, val );
     }
+
+    public ELEMENT_TYPE getType(){
+        return type;
+    };
 }

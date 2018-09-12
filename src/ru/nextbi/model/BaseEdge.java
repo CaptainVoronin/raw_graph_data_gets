@@ -17,11 +17,13 @@ public abstract class BaseEdge extends GraphElement
 
     public BaseEdge(String from, String to)
     {
+        super( ELEMENT_TYPE.EDGE );
         this.from = from;
         this.to = to;
     }
 
-    public ELEMENT_TYPE getElementType()
+    @Override
+    public ELEMENT_TYPE getType()
     {
         return ELEMENT_TYPE.EDGE;
     }

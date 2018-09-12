@@ -12,12 +12,13 @@ public class BaseVertex extends GraphElement
 
     public BaseVertex( String parentID )
     {
-        super( );
+        super( ELEMENT_TYPE.VERTEX );
         this.parentID = parentID;
         posessors = new HashMap<>();
     }
 
-    public ELEMENT_TYPE getElementType()
+    @Override
+    public ELEMENT_TYPE getType()
     {
         return ELEMENT_TYPE.VERTEX;
     }

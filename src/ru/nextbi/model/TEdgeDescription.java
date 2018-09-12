@@ -10,6 +10,10 @@ public class TEdgeDescription extends GraphElementDescription
     String fromVertex;
     String toVertex;
 
+    public TEdgeDescription(){
+        super(GraphElement.ELEMENT_TYPE.EDGE);
+    }
+
     public String getFromVertex() {
         return fromVertex;
     }

@@ -12,13 +12,22 @@ public class GraphElementDescription
     protected int min;
     protected int max;
     protected  Map<String, GraphObjectProperty> props;
+    GraphElement.ELEMENT_TYPE type;
 
+    public GraphElement.ELEMENT_TYPE getType(){
+        return type;
+    }
 
-    public GraphElementDescription()
+    public void setType(GraphElement.ELEMENT_TYPE type){
+        this.type = type;
+    }
+
+    public GraphElementDescription( GraphElement.ELEMENT_TYPE type )
     {
         props = new HashMap<>();
         min = -1;
         max = 1;
+        this.type = type;
     }
 
     public String getClassName() {
@@ -52,4 +61,5 @@ public class GraphElementDescription
     public void setProperties(Map<String, GraphObjectProperty> props) {
         this.props = props;
     }
+
 }
