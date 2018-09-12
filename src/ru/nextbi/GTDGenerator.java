@@ -36,8 +36,13 @@ public class GTDGenerator
         ops.addOption(output);
 
         Option clear = new Option("c", "clear", false, "clear target directory");
-        output.setRequired(true);
+        clear.setRequired(false);
         ops.addOption(clear);
+
+        Option param = new Option("p", "parameter", true, "parameter value");
+        param.setRequired(false);
+        ops.addOption(param);
+
 
 
         CommandLineParser parser = new DefaultParser();
@@ -52,6 +57,11 @@ public class GTDGenerator
             System.exit(1);
             return;
         }
+
+            Map<String, String> inputParams = new HashMap<>();
+            String[] params = cmd.getOptionValues( "parameter" );
+            if( params != null )
+               parseInputParams( params, inputParams );
 
             String schemeFile = cmd.getOptionValue("scheme");
             String outputDirPath = cmd.getOptionValue("outdir");
@@ -92,7 +102,7 @@ public class GTDGenerator
             String buff = fmt.format( start );
 
             System.out.println( buff );
-            gen.generateGraph( rawDesc, dir );
+            gen.generateGraph( inputParams, rawDesc, dir );
 
             Date end = Calendar.getInstance().getTime();
             buff = fmt.format( end );
@@ -101,6 +111,15 @@ public class GTDGenerator
 
         } catch( Exception e ) {
             e.printStackTrace();
+        }
+    }
+
+    private static void parseInputParams(String[] params, Map<String, String> inputParams)
+    {
+        for( String par : params )
+        {
+            String[] parts = par.split( "=" );
+            inputParams.put( parts[0], parts.length > 1 ? parts[1] : "" );
         }
     }
 
@@ -114,7 +133,8 @@ public class GTDGenerator
         System.out.println( "Done" );
     }
 
-    void generateGraph( String rawDescription, File dir ) throws Exception{
+    void generateGraph(Map<String, String> params, String rawDescription, File dir) throws Exception{
+
         config = new HashMap<>();
 
         // Положить в конфиг рабочую директорию
@@ -122,7 +142,7 @@ public class GTDGenerator
         buff = buff.substring( 0, buff.length() - 1 );
         config.put( CURRENT_DIR_KEY, buff );
 
-        GraphModel model = GraphModelParser.parse( config, rawDescription );
+        GraphModel model = GraphModelParser.parse( params, config, rawDescription );
         boolean result = GraphModelParser.check( model );
 
         if( !result )

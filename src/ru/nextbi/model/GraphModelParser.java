@@ -34,14 +34,19 @@ public class GraphModelParser
     static Pattern pattern_range_extractor = Pattern.compile( "\\[(.*?)\\]" );
     static Pattern pattern_get_generator_call = Pattern.compile( "(^[a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)([a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)(\\(\\s*)(.*)(\\s*\\))" );
 
-    public static final GraphModel parse( Map<String,String> config, String buff ) throws Exception{
+    public static final GraphModel parse( Map<String, String> params, Map<String, String> config, String buff) throws Exception{
         System.out.println( "Start parsing" );
 
         GraphModel model = new GraphModel();
 
         String[] rows = buff.split( "\n" );
 
+        // Распарсим конфиг
         parseConfig( rows, config  );
+
+        //ДОбавим или перетрем в конфиге параметры из командной строки
+        config.putAll( params );
+
 
         buff = substituteVariables( config, buff );
 
