@@ -44,13 +44,11 @@ public class GraphModelParser
         // Распарсим конфиг
         parseConfig( rows, config  );
 
-        //ДОбавим или перетрем в конфиге параметры из командной строки
+        //Добавим в конфиг параметры из командной строки.
+        // Они могут что-то перетерть, но у них приоритет выше
         config.putAll( params );
 
-
-        buff = substituteVariables( config, buff );
-
-        rows = buff.split( "\n" );
+        rows = substituteVariables( config, buff );
 
         for( int i = 0; i < rows.length; i++ )
         {
@@ -78,8 +76,9 @@ public class GraphModelParser
         return model;
     }
 
-    private static String substituteVariables(Map<String, String> config, String buff)
+    private static String[] substituteVariables(Map<String, String> config, String buff)
     {
+
         for( String name : config.keySet() )
         {
             if( name.startsWith( "$")) {
@@ -88,7 +87,10 @@ public class GraphModelParser
                 buff = buff.replaceAll( pattern, Matcher.quoteReplacement( value ) );
             }
         }
-        return buff;
+
+        buff = buff.replaceAll("CONFIG_START\\s*\\r*\\n(.*\\r*\\n)+\\s*CONFIG_END", "\n");
+
+        return buff.split( "\n");
     }
 
     private static void parseConfig(String[] rows, Map<String,String> config)
