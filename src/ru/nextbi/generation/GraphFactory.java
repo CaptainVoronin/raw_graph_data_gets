@@ -73,6 +73,7 @@ public class GraphFactory
                 resolveLinks( graph, desc, v );
                 omniWriter.write( desc, v );
             }
+            omniWriter.forget( key );
         }
         omniWriter.closeAll();
         System.out.println( "Done" );
