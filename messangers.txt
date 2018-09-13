@@ -62,7 +62,7 @@ prop: send_date datetime( start=$start_date, end=$end_date, format=dd.MM.yyyy )
 T_EDGE_END
 
 CONFIG_START
-$pCount=10000
+$pCount=100
 cash_default=true
 $some_int=100
 $start_date=01.01.2018
