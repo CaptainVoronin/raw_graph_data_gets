@@ -3,7 +3,6 @@ package ru.nextbi.generation.atomic;
 import java.io.IOException;
 import java.util.*;
 
-// TODO: Надо приделать к нему словарь и слить с генератором CyclicSet, они отличаются только getValue()
 public class OptionChooser extends BaseDictionaryGenerator
 {
     protected Dictionary options;
