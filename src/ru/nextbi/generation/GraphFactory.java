@@ -16,122 +16,119 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class GraphFactory
-{
+public class GraphFactory {
 
     static int count = 0;
 
-    protected GraphFactory(){}
+    protected GraphFactory() {
+    }
 
-    static void incCount()
-    {
+    static void incCount() {
         count++;
-        if( count >= 10000 )
-        {
-            System.out.println( "Generated " + count );
+        if (count >= 10000) {
+            System.out.println("Generated " + count);
         }
     }
-    public static final Graph createGraph(Map<String, String> config, File dir, GraphModel model, HashMap< String, IGenerator> generators ) throws Exception
-    {
+
+    public static final Graph createGraph(Map<String, String> config, File dir, GraphModel model, HashMap<String, IGenerator> generators) throws Exception {
         Graph graph = new Graph();
-        OmniWriter omniWriter = new OmniWriter( config, dir );
+        OmniWriter omniWriter = new OmniWriter(config, dir);
         // Сначала генераятся все вершины
         Set<String> classes = model.getVertexDescriptions().keySet();
 
-        System.out.println( "Generating vertices IDs" );
-        for( String key : classes )
-        {
-            VertexDescription desc = model.getVertexDescription( key );
+        System.out.println("Generating vertices IDs");
+        for (String key : classes) {
+            VertexDescription desc = model.getVertexDescription(key);
 
             // Отсюда генерятся только вершины без родителей
-            if ( desc.getParentClassName() != null )
+            if (desc.getParentClassName() != null)
                 continue;
 
-            Pair<Integer, Integer> pair = VertexGenerator.getRange( desc.getMin(), desc.getMax() );
+            Pair<Integer, Integer> pair = VertexGenerator.getRange(desc.getMin(), desc.getMax());
 
-            for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ )
-                VertexGenerator.generateIDs( graph, model, desc, null, generators );
+            for (int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++)
+                VertexGenerator.generateIDs(graph, model, desc, null, generators);
         }
 
-        System.out.println( "Done" );
+        System.out.println("Done");
 
-        if( config.containsKey(GTDGenerator.SAVE_IDS))
-        {
-            System.out.println( "Write IDs" );
-            saveIDs( config, dir, model, graph );
-            System.out.println( "Done" );
+        if (config.containsKey(GTDGenerator.SAVE_IDS)) {
+            System.out.println("Write IDs");
+            saveIDs(config, dir, model, graph);
+            System.out.println("Done");
         }
 
         // По готовым ID создаем и пишем экземпляры верш
         // ин
-        System.out.println( "Generating vertices instances" );
+        System.out.println("Generating vertices instances");
         classes = model.getVertexDescriptions().keySet();
 
-        for( String key : classes )
-        {
+        for (String key : classes) {
 
-            VertexDescription desc = model.getVertexDescription( key );
+            VertexDescription desc = model.getVertexDescription(key);
 
             // Берем IDы и идем по ним
-            List<Graph.ParentChild> ids = graph.getVerticesIDList( key );
+            List<Graph.ParentChild> ids = graph.getVerticesIDList(key);
 
-            for( Graph.ParentChild pc : ids )
-            {
-                BaseVertex v = VertexGenerator.createVertex( generators, desc, pc.child, pc.parent );
+            for (Graph.ParentChild pc : ids) {
+                BaseVertex v = VertexGenerator.createVertex(generators, desc, pc.child, pc.parent);
                 incCount();
-                resolveLinks( graph, desc, v );
-                omniWriter.write( desc, v );
+                resolveLinks(graph, desc, v);
+                omniWriter.write(desc, v);
             }
-            omniWriter.forget( key );
+            omniWriter.forget(key);
         }
         omniWriter.closeAll();
-        System.out.println( "Done" );
+        System.out.println("Done");
 
         return graph;
     }
 
-    private static void saveIDs(Map<String,String> config, File dir, GraphModel model, Graph graph) throws IOException {
-        for( String className : model.getVertexDescriptions().keySet() )
-        {
-            List<Graph.ParentChild> ids = graph.getVerticesIDList( className );
-            FileWriter fw = new FileWriter( dir.getPath() + File.separator + className + "_ids.csv" );
-            for(Graph.ParentChild pc : ids )
-            {
-                fw.write( pc.child + "\n" );
+    private static void saveIDs(Map<String, String> config, File dir, GraphModel model, Graph graph) throws IOException {
+        for (String className : model.getVertexDescriptions().keySet()) {
+            List<Graph.ParentChild> ids = graph.getVerticesIDList(className);
+            FileWriter fw = new FileWriter(dir.getPath() + File.separator + className + "_ids.csv");
+            for (Graph.ParentChild pc : ids) {
+                fw.write(pc.child + "\n");
             }
             fw.close();
         }
     }
 
-    private static void resolveLinks(Graph graph, VertexDescription desc, BaseVertex v)
-    {
+    private static void resolveLinks(Graph graph, VertexDescription desc, BaseVertex v) {
 
-        for( Link link : desc.getLinks() )
-        {
-            switch( link.getCondition() ) {
+        for (Link link : desc.getLinks()) {
+            switch (link.getCondition()) {
                 case MUST:
-                    for( Link.Target target : link.getTargets() )
-                    {
+                    for (Link.Target target : link.getTargets()) {
                         List<Graph.ParentChild> ids = graph.getVerticesIDList(target.className);
                         v.addLink(target.className, ids.get(IntGenerator.getInt(0, ids.size() - 1)).child);
                     }
                     break;
-                case OR:
-                {
-                    String id;
-                    int rnd = IntGenerator.getInt( 0, link.getTargets().size() - 1);
+                case OR: {
+                    String id = VertexSerializer.NULL_ALIAS;
+                    int rnd = IntGenerator.getInt(0, link.getTargets().size() - 1);
                     int index = 0;
-                    for( Link.Target target : link.getTargets() )
-                    {
-                        if( rnd == index ) {
+                    for (Link.Target target : link.getTargets()) {
+                        if (rnd == index) {
                             List<Graph.ParentChild> ids = graph.getVerticesIDList(target.className);
-
-                            // TODO: Здесь проблемы с NullPointerException
-                            id = ids.get( IntGenerator.getInt(0, ids.size() - 1) ).child;
+                            id = ids.get(IntGenerator.getInt(0, ids.size() - 1)).child;
                         }
-                        else
-                            id = VertexSerializer.NULL_ALIAS;
-                        v.addLink( target.className, id );
+                        v.addLink(target.className, id);
+                    }
+                }
+                break;
+                case MAY: {
+                    String id = VertexSerializer.NULL_ALIAS;
+                    for (Link.Target target : link.getTargets()) {
+                        // Может быть с половинной вероятностью
+                        int rnd = IntGenerator.getInt(0, 9);
+                        if (rnd >= 5) {
+                            List<Graph.ParentChild> ids = graph.getVerticesIDList(target.className);
+                            id = ids.get(IntGenerator.getInt(0, ids.size() - 1)).child;
+                        }
+
+                        v.addLink(target.className, id);
                     }
                 }
                 break;
@@ -141,25 +138,23 @@ public class GraphFactory
         }
     }
 
-    public static void createAndWriteEdges(File dir, Graph graph, GraphModel model, HashMap< String, IGenerator> generators ) throws Exception
-    {
-        System.out.println( "Generating edges" );
+    public static void createAndWriteEdges(File dir, Graph graph, GraphModel model, HashMap<String, IGenerator> generators) throws Exception {
+        System.out.println("Generating edges");
 
         // Потом генерятся все ребра
         Set<String> classes = model.getTEdgeDescriptionList().keySet();
 
-        for( String key : classes )
-        {
-            System.out.println( "Generate " + key );
-            TEdgeDescription ted = model.getTEdgeDescription( key );
+        for (String key : classes) {
+            System.out.println("Generate " + key);
+            TEdgeDescription ted = model.getTEdgeDescription(key);
 
-            Pair<Integer, Integer> pair = VertexGenerator.getRange( ted.getMin(), ted.getMax() );
+            Pair<Integer, Integer> pair = VertexGenerator.getRange(ted.getMin(), ted.getMax());
             long count = 0;
-            for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ )
-                count += TEdgeGenerator.generate( dir, graph, model, ted, generators );
+            for (int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++)
+                count += TEdgeGenerator.generate(dir, graph, model, ted, generators);
 
-            System.out.println( "" + count + " has been written" );
+            System.out.println("" + count + " has been written");
         }
-        System.out.println( "Done" );
+        System.out.println("Done");
     }
 }
