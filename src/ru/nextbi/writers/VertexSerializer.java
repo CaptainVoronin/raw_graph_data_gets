@@ -2,13 +2,15 @@ package ru.nextbi.writers;
 
 import ru.nextbi.generation.GraphObjectProperty;
 import ru.nextbi.model.BaseVertex;
-import ru.nextbi.model.GraphElement;
+import ru.nextbi.model.Link;
 import ru.nextbi.model.VertexDescription;
 
+import java.util.List;
 import java.util.Map;
 
 public class VertexSerializer
 {
+    public static String NULL_ALIAS = "@@numm@@@@--^6%()-####@@@@";
     char delimiter;
 
     public void setDelimiter(char delimiter)
@@ -34,17 +36,19 @@ public class VertexSerializer
         Map<String, GraphObjectProperty> props = vd.getProperties();
         Map<String, String>  values = v.getProperties();
 
-        // ID придется записать силовым методом
-        //st.append( values.get( GraphElement.KEY_ID ) ).append( delimiter );
-
         for( String name : props.keySet() ) {
             st.append(values.get(name)).append(delimiter);
         }
 
-        Map<String, String> links = v.getPosessors();
-        for( String className : vd.getLinks() )
+        for( Link link : vd.getLinks() )
         {
-            st.append( links.get( className ) ).append( delimiter );
+            for( Link.Target target : link.getTargets() ) {
+                String value = v.getLinks().get( target.className );
+                if( !value.equals( VertexSerializer.NULL_ALIAS  ))
+                    st.append( value ).append(delimiter);
+                else
+                    st.append( delimiter );
+            }
         }
 
         st.deleteCharAt( st.length() - 1 );

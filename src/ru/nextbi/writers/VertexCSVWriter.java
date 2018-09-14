@@ -2,6 +2,7 @@ package ru.nextbi.writers;
 
 import ru.nextbi.generation.GraphObjectProperty;
 import ru.nextbi.model.BaseVertex;
+import ru.nextbi.model.Link;
 import ru.nextbi.model.VertexDescription;
 
 import java.io.File;
@@ -47,8 +48,9 @@ public class VertexCSVWriter
         for( String key : props.keySet() )
             st.append( props.get( key ).name ).append( delimiter );
 
-        for( String className : vertexDescription.getLinks() )
-            st.append(  className + "_id" ).append( delimiter );
+        for( Link link : vertexDescription.getLinks() )
+            for( Link.Target target : link.getTargets() )
+                st.append(target.className + "_id").append(delimiter);
 
         st.deleteCharAt( st.length() - 1 );
         st.append( '\n' );

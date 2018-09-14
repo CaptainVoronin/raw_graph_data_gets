@@ -1,5 +1,6 @@
 package ru.nextbi.model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,13 +9,15 @@ public class BaseVertex extends GraphElement
 {
 
     String parentID;
-    Map<String, String> posessors;
+
+    // ID'ы
+    Map<String, String> links;
 
     public BaseVertex( String parentID )
     {
         super( ELEMENT_TYPE.VERTEX );
         this.parentID = parentID;
-        posessors = new HashMap<>();
+        links = new HashMap<>();
     }
 
     @Override
@@ -28,13 +31,13 @@ public class BaseVertex extends GraphElement
         return parentID;
     }
 
-    public void addPosessor( String className, String id )
+    public void addLink(String className, String link)
     {
-        posessors.put(  className, id );
+        links.put( className, link );
     }
 
-    public Map<String,String> getPosessors()
+    public Map<String, String> getLinks()
     {
-        return posessors;
+        return links;
     }
 }

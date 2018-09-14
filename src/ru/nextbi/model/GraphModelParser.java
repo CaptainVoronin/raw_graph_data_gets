@@ -11,28 +11,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- *
- VERTEX_START
- class: OU [-1,20]
- own: eployee [5,20]
- prop: name
- VERTEX_END
- VERTEX_START
- class: employee
- own: e-mail [1,5]
- VERTEX_END
- VERTEX_START
- class: e-mail
- prop: name
- VERTEX_END
- *
- */
-
 public class GraphModelParser
 {
     static Pattern pattern_range_extractor = Pattern.compile( "\\[(.*?)\\]" );
     static Pattern pattern_get_generator_call = Pattern.compile( "(^[a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)([a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)(\\(\\s*)(.*)(\\s*\\))" );
+    static Pattern get_link_arguments = Pattern.compile( "((or|and|must)\\s*=\\s*\\(\\s*)([a-zA-Z][a-zA-Z0-9_\\-\\[\\],\\s]*)+" );
+    static Pattern get_link_target = Pattern.compile( "(([a-zA-Z][a-zA-Z0-9_]+)(\\[\\s*(([-0-9]+)\\s*,\\s*([-0-9]+))\\s*\\])*\\s*)" );
 
     public static final GraphModel parse( Map<String, String> params, Map<String, String> config, String buff) throws Exception{
         System.out.println( "Start parsing" );
@@ -313,9 +297,52 @@ public class GraphModelParser
         return j;
     }
 
-    private static void parseLinkStatement(VertexDescription vd, String row)  {
-        String val = getValueString( row ).trim();
-        vd.addLink( val );
+    private static void parseLinkStatement(VertexDescription vd, String row)
+    {
+        Matcher m = get_link_arguments.matcher( row );
+        String condition;
+        String rawArgs;
+        while( m.find() )
+        {
+            condition = m.group( 2 );
+            rawArgs = m.group( 3 );
+            if( condition == null || rawArgs == null )
+                throw new IllegalArgumentException( "Link syntax is incorrect " + row );
+            Link.Condition cnd = Link.Condition.valueOf( condition.toUpperCase() );
+            Link link = new Link( cnd );
+            getTargets( link, rawArgs  );
+            vd.addLink( link );
+        }
+    }
+
+    private static void getTargets(Link link, String rawArgs)
+    {
+        Integer iMin;
+        Integer iMax;
+        Matcher m = get_link_target.matcher( rawArgs );
+
+        while( m.find() )
+        {
+            String tagetName = m.group(  1 );
+            if( tagetName == null )
+                throw new IllegalArgumentException ( "Link arguments syntax is incorrect " + rawArgs );
+
+            String min = m.group( 5 );
+            String max = m.group( 6 );
+
+            if( min != null || max != null )
+            {
+                iMin = Integer.parseInt( min );
+                iMax = Integer.parseInt( max );
+            }
+            else
+            {
+                iMin = new Integer( -1 );
+                iMax = new Integer( 1 );
+            }
+
+            link.addTarget( tagetName, iMin, iMax );
+        }
     }
 
     private static void parseClassString( GraphElementDescription eld , String row) throws Exception{
@@ -323,9 +350,6 @@ public class GraphModelParser
         Matcher m = p.matcher( row.trim() );
         if( m.find() )
         {
-//            for( int i = 0; i <=  m.groupCount(); i++ )
-//                System.out.println( "#" + i + " " + m.group( i ) );
-
             // Имя класса
             if( m.group( 1 ) != null )
                 eld.setClassName( m.group( 1 ).trim() );

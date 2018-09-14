@@ -6,6 +6,7 @@ import ru.nextbi.generation.atomic.IGenerator;
 import ru.nextbi.generation.atomic.IntGenerator;
 import ru.nextbi.model.*;
 import ru.nextbi.writers.OmniWriter;
+import ru.nextbi.writers.VertexSerializer;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -104,12 +105,39 @@ public class GraphFactory
 
     private static void resolveLinks(Graph graph, VertexDescription desc, BaseVertex v)
     {
-        List<String> links = desc.getLinks();
-        for( String className : links )
+
+        for( Link link : desc.getLinks() )
         {
-            List<Graph.ParentChild> ids = graph.getVerticesIDList( className );
-            int index = IntGenerator.getInt( 0, ids.size() - 1 );
-            v.addPosessor( className, ids.get( index ).child );
+            switch( link.getCondition() ) {
+                case MUST:
+                    for( Link.Target target : link.getTargets() )
+                    {
+                        List<Graph.ParentChild> ids = graph.getVerticesIDList(target.className);
+                        v.addLink(target.className, ids.get(IntGenerator.getInt(0, ids.size() - 1)).child);
+                    }
+                    break;
+                case OR:
+                {
+                    String id;
+                    int rnd = IntGenerator.getInt( 0, link.getTargets().size() - 1);
+                    int index = 0;
+                    for( Link.Target target : link.getTargets() )
+                    {
+                        if( rnd == index ) {
+                            List<Graph.ParentChild> ids = graph.getVerticesIDList(target.className);
+
+                            // TODO: Здесь проблемы с NullPointerException
+                            id = ids.get( IntGenerator.getInt(0, ids.size() - 1) ).child;
+                        }
+                        else
+                            id = VertexSerializer.NULL_ALIAS;
+                        v.addLink( target.className, id );
+                    }
+                }
+                break;
+                default:
+                    break;
+            }
         }
     }
 
