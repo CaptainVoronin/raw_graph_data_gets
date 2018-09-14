@@ -24,7 +24,7 @@ class: account [-1,100]
 link: bank
 prop: id long_id()
 prop: name digit_string (length=24)
-prop: currency option_chooser (set=USD,EU,RU,GBP)
+prop: currency option_chooser (set="USD,EU,RU,GBP")
 prop: created datetime (start=01.01.2014, end=31.09.2018, in-format=dd.MM.yyyy, out-format="dd.MM.yyyy HH:mm:ss")
 VERTEX_END
 
@@ -72,5 +72,4 @@ prop: send_date datetime (start=01.01.2018, end=31.09.2018, in-format=dd.MM.yyyy
 T_EDGE_END
 
 CONFIG_START
-
 CONFIG_END

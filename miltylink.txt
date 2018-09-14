@@ -8,7 +8,7 @@ VERTEX_END
 // Банк
 VERTEX_START
 class: bank [-1,10]
-link: city
+link: must1=(city)
 prop: id long_id (for_bank)
 prop: name dictionary( dictionary=bank-list.txt )
 VERTEX_END
@@ -16,9 +16,7 @@ VERTEX_END
 // Банковский счет
 VERTEX_START
 class: account [-1,100]
-link: bank
-link: person
-link: university
+link: must=(bank) or=(person, university )
 prop: id long_id( for_account )
 prop: name digit_string (length=24)
 prop: currency option_chooser (set="USD,EU,RU,GBP")
@@ -28,7 +26,7 @@ VERTEX_END
 // ВУЗы
 VERTEX_START
 class: university [-1,20]
-link: city
+link: must=(city)
 own: account [-1,2]
 prop: id long_id( for_univer )
 prop: name dictionary ( dictionary=university-ru.txt )
@@ -37,7 +35,7 @@ VERTEX_END
 // Люди
 VERTEX_START
 class: person [-1, 500]
-link: university
+link: must=(university)
 own: email [1,2]
 prop: id long_id( for_person )
 prop: name human_name ( male-names=male-names-ru.txt, male-surnames=male-surnames-ru.txt, female-names=female-names-ru.txt, female-surnames=female-surnames-ru.txt)
