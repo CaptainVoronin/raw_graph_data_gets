@@ -21,6 +21,7 @@ public class GTDGenerator
     public static final String CURRENT_DIR_KEY = "current_dir";
     public static final String CASH_DEFAULT = "cash_default";
     public static final String SAVE_IDS = "save-ids";
+    public static final String NULL_VALUE_SEQUENCE = "null_value";
 
     Map<String, String > config;
 
@@ -126,7 +127,7 @@ public class GTDGenerator
         for( String par : params )
         {
             String[] parts = par.split( "=" );
-            inputParams.put( parts[0], parts.length > 1 ? parts[1] : "" );
+            inputParams.put( parts[0].trim(), parts.length > 1 ? parts[1].trim() : "" );
         }
     }
 
@@ -134,9 +135,7 @@ public class GTDGenerator
         File[] items = dir.listFiles();
         System.out.println( "Clear target directory" );
         for( File file : items )
-        {
             file.delete();
-        }
         System.out.println( "Done" );
     }
 

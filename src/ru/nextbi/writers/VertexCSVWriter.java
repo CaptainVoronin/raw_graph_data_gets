@@ -1,5 +1,6 @@
 package ru.nextbi.writers;
 
+import ru.nextbi.GTDGenerator;
 import ru.nextbi.generation.GraphObjectProperty;
 import ru.nextbi.model.BaseVertex;
 import ru.nextbi.model.Link;
@@ -29,6 +30,7 @@ public class VertexCSVWriter
 
         vertexSerializer = new VertexSerializer();
         vertexSerializer.setDelimiter( delimiter );
+        vertexSerializer.setNullValueSequence( config.getOrDefault(GTDGenerator.NULL_VALUE_SEQUENCE, "" ) );
         fileWriter = new FileWriter( this.filename  );
     }
 

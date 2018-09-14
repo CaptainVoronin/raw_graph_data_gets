@@ -20,7 +20,7 @@ public class OmniWriter{
         writers = new HashMap<>();
     }
 
-    public void write(VertexDescription vd, BaseVertex v ) throws Exception{
+    public void write( VertexDescription vd, BaseVertex v ) throws Exception{
         VertexCSVWriter writer = writers.get( vd.getClassName() );
         if( writer == null )
         {

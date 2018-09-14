@@ -15,7 +15,7 @@ public class GraphModelParser
 {
     static Pattern pattern_range_extractor = Pattern.compile( "\\[(.*?)\\]" );
     static Pattern pattern_get_generator_call = Pattern.compile( "(^[a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)([a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)(\\(\\s*)(.*)(\\s*\\))" );
-    static Pattern get_link_arguments = Pattern.compile( "((or|and|must)\\s*=\\s*\\(\\s*)([a-zA-Z][a-zA-Z0-9_\\-\\[\\],\\s]*)+" );
+    static Pattern get_link_arguments = Pattern.compile( "((or|may|must)\\s*=\\s*\\(\\s*)([a-zA-Z][a-zA-Z0-9_\\-\\[\\],\\s]*)+" );
     static Pattern get_link_target = Pattern.compile( "(([a-zA-Z][a-zA-Z0-9_]+)(\\[\\s*(([-0-9]+)\\s*,\\s*([-0-9]+))\\s*\\])*\\s*)" );
 
     public static final GraphModel parse( Map<String, String> params, Map<String, String> config, String buff) throws Exception{
@@ -166,7 +166,21 @@ public class GraphModelParser
                     child.setParentClassName( vd.getClassName() );
                 }
             }
+
+            for( Link link : vd.getLinks() )
+            {
+                for( Link.Target target : link.targets )
+                {
+                    if( model.getVertexDescription( target.className ) == null )
+                    {
+                        result = false;
+                        System.out.println( "Error. Vertex type " + target.className + " referenced by " + type + " as link not found " );
+                    }
+                }
+            }
         }
+
+        // Пповерить ссылки
 
         Map<String, TEdgeDescription> teds = model.getTEdgeDescriptionList();
 
@@ -313,6 +327,10 @@ public class GraphModelParser
             getTargets( link, rawArgs  );
             vd.addLink( link );
         }
+        if( vd.getLinks().size() == 0 )
+        {
+            throw new IllegalArgumentException( "Link syntax is incorrect " + row );
+        }
     }
 
     private static void getTargets(Link link, String rawArgs)
@@ -326,6 +344,8 @@ public class GraphModelParser
             String tagetName = m.group(  1 );
             if( tagetName == null )
                 throw new IllegalArgumentException ( "Link arguments syntax is incorrect " + rawArgs );
+
+            tagetName = tagetName.trim();
 
             String min = m.group( 5 );
             String max = m.group( 6 );
