@@ -1,0 +1,17 @@
+<project name="MyProject" default="init" basedir=".">
+    <description>
+        Increment build number
+    </description>
+    <!-- set global properties for this build -->
+    <property name="src" location="."/>
+
+    <target name="init">
+        <buildnumber/>
+        <replaceregexp file="${src}/Version.java"
+                       match="public\s+static\s+final\s+int\s+BUILD_NUMBER\s*=\s*\d+;"
+                       replace="public static final int BUILD_NUMBER = ${build.number};"
+                       byline="true"
+        />
+
+    </target>
+</project>
