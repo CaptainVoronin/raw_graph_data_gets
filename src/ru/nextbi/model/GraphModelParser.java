@@ -16,7 +16,8 @@ public class GraphModelParser
     static Pattern pattern_range_extractor = Pattern.compile( "\\[(.*?)\\]" );
     static Pattern pattern_get_generator_call = Pattern.compile( "(^[a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)([a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)(\\(\\s*)(.*)(\\s*\\))" );
     static Pattern get_link_arguments = Pattern.compile( "((or|may|must)\\s*=\\s*\\(\\s*)([a-zA-Z][a-zA-Z0-9_\\-\\[\\],\\s]*)+" );
-    static Pattern get_link_target = Pattern.compile( "(([a-zA-Z][a-zA-Z0-9_]+)(\\[\\s*(([-0-9]+)\\s*,\\s*([-0-9]+))\\s*\\])*\\s*)" );
+    //static Pattern get_link_target = Pattern.compile( "(([a-zA-Z][a-zA-Z0-9_]+)(\\[\\s*(([-0-9]+)\\s*,\\s*([-0-9]+))\\s*\\])*\\s*)" );
+    static Pattern get_link_target_with_probability = Pattern.compile( "([a-zA-Z][a-zA-Z0-9_]+)(\\[\\s*(([0-9]+)\\s*\\]))*");
 
     public static final GraphModel parse( Map<String, String> params, Map<String, String> config, String buff) throws Exception{
         System.out.println( "Start parsing" );
@@ -324,7 +325,7 @@ public class GraphModelParser
                 throw new IllegalArgumentException( "Link syntax is incorrect " + row );
             Link.Condition cnd = Link.Condition.valueOf( condition.toUpperCase() );
             Link link = new Link( cnd );
-            getTargets( link, rawArgs  );
+            getTargets( link, cnd, rawArgs  );
             vd.addLink( link );
         }
         if( vd.getLinks().size() == 0 )
@@ -333,36 +334,73 @@ public class GraphModelParser
         }
     }
 
-    private static void getTargets(Link link, String rawArgs)
+    private static void getTargets(Link link, Link.Condition condition, String rawArgs)
     {
-        Integer iMin;
-        Integer iMax;
-        Matcher m = get_link_target.matcher( rawArgs );
+        Integer probability;
+        Matcher m = get_link_target_with_probability.matcher( rawArgs );
 
         while( m.find() )
         {
-            String tagetName = m.group(  1 );
-            if( tagetName == null )
+            String targetName = m.group(  1 );
+            if( targetName == null )
                 throw new IllegalArgumentException ( "Link arguments syntax is incorrect " + rawArgs );
 
-            tagetName = tagetName.trim();
+            targetName = targetName.trim();
 
-            String min = m.group( 5 );
-            String max = m.group( 6 );
-
-            if( min != null || max != null )
+            String prob = m.group( 4 );
+            if( ( prob != null ) && condition.equals( Link.Condition.MUST ))
             {
-                iMin = Integer.parseInt( min );
-                iMax = Integer.parseInt( max );
+                System.out.println( "MUST condition is't supposed to have any value of probability. Line \"" + rawArgs +"\". Ignored" );
+                continue;
+            }
+
+            if( prob != null )
+            {
+                link.addTarget( targetName, Integer.parseInt( prob ) );
             }
             else
             {
-                iMin = new Integer( -1 );
-                iMax = new Integer( 1 );
+                link.addTarget( targetName );
+                System.out.println( "Probability for " + targetName + " in omitted " + " the default value is 50" );
             }
 
-            link.addTarget( tagetName, iMin, iMax );
         }
+        // Проверить вероятности
+        switch( condition )
+        {
+            case MAY:
+                // Если это связь может быть, а может не быть
+                // то вероятности независимые, надо просто проверить
+                // чтобы они не были больше или равны 100.
+                // Если вероятность в условии "может быть" равна 100, то какой же это "может быть"
+                for( Link.Target target : link.getTargets() )
+                {
+                    if( target.probability >= 100 && target.probability <= 0 )
+                        throw new IllegalArgumentException( "Wrong value for probability in MAY condition for target \""
+                                + target.className + "\". Value is " + target.probability );
+                }
+                break;
+            case OR:
+                // Если должна быть установлена связь с одной из нескольких вершин,
+                // то вероятности суммируются и не должны быть больше 100%
+                int sum = 0;
+                for( Link.Target target : link.getTargets() )
+                {
+                    if( target.probability >= 100 && target.probability <= 0 )
+                        throw new IllegalArgumentException( "Wrong value for probability in OR condition for target "
+                                + target.className + ". Value is " + target.probability );
+                    sum += target.probability;
+                }
+
+                if( sum > 100 || sum <= 0 )
+                    throw new IllegalArgumentException( "Wrong value for probability in OR condition in line \""
+                            + rawArgs + "\". Value is " + sum );
+                break;
+            default:
+                break;
+        }
+
+
     }
 
     private static void parseClassString( GraphElementDescription eld , String row) throws Exception{

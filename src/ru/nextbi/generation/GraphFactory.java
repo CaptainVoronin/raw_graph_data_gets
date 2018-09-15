@@ -107,27 +107,32 @@ public class GraphFactory {
                     break;
                 case OR: {
                     String id = VertexSerializer.NULL_ALIAS;
-                    int rnd = IntGenerator.getInt(0, link.getTargets().size() - 1);
-                    int index = 0;
+                    int rnd = IntGenerator.getInt(0, 99);
+                    int sum = 0;
+
+                    boolean hasHit = false;
                     for (Link.Target target : link.getTargets()) {
-                        if (rnd == index) {
+                        sum += target.probability;
+                        if ( rnd <= sum && !hasHit ) {
                             List<Graph.ParentChild> ids = graph.getVerticesIDList(target.className);
                             id = ids.get(IntGenerator.getInt(0, ids.size() - 1)).child;
+                            // Все, остальные ребра уже не проверяются
+                            hasHit = true;
                         }
                         v.addLink(target.className, id);
+                        id = VertexSerializer.NULL_ALIAS;
                     }
                 }
                 break;
                 case MAY: {
                     String id = VertexSerializer.NULL_ALIAS;
                     for (Link.Target target : link.getTargets()) {
-                        // Может быть с половинной вероятностью
-                        int rnd = IntGenerator.getInt(0, 9);
-                        if (rnd >= 5) {
+
+                        int rnd = IntGenerator.getInt(0, 99);
+                        if (rnd <= target.probability) {
                             List<Graph.ParentChild> ids = graph.getVerticesIDList(target.className);
                             id = ids.get(IntGenerator.getInt(0, ids.size() - 1)).child;
                         }
-
                         v.addLink(target.className, id);
                     }
                 }

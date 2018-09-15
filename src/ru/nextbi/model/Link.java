@@ -10,7 +10,7 @@ import java.util.List;
  * говорит, что связь доолна обязятельно быть создана с банком и кроме нее либо с person, либо с organisation
  */
 public class Link{
-    public enum Condition{ MUST, OR, AND, MAY };
+    public enum Condition{ MUST, OR, MAY };
 
     /**
      * Усдовия содания связли
@@ -41,17 +41,27 @@ public class Link{
 
     public class Target
     {
+        public Target()
+        {
+            probability = 50;
+        }
+
         public String className;
-        int min;
-        int max;
+        public int probability;
     }
 
-    public void addTarget( String className, Integer min, Integer max )
+    public void addTarget( String className )
     {
         Target t = new Target();
         t.className = className;
-        t.min = min;
-        t.max = max;
         addTarget( t );
     }
+    public void addTarget(String className, Integer probability)
+    {
+        Target t = new Target();
+        t.className = className;
+        t.probability = probability.intValue();
+        addTarget( t );
+    }
+
 }
