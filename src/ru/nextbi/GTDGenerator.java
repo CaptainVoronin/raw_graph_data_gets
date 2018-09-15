@@ -16,25 +16,23 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-public class GTDGenerator
-{
+public class GTDGenerator {
     public static final String CURRENT_DIR_KEY = "current_dir";
     public static final String CASH_DEFAULT = "cash_default";
     public static final String SAVE_IDS = "save-ids";
     public static final String NULL_VALUE_SEQUENCE = "null_value";
 
-    Map<String, String > config;
+    Map<String, String> config;
 
-    public static void main(String[] args) throws IOException
-    {
+    public static void main(String[] args) throws IOException {
         Options ops = new Options();
 
         Option input = new Option("s", "scheme", true, "scheme file path");
-        input.setRequired(true);
+        input.setRequired(false);
         ops.addOption(input);
 
         Option output = new Option("o", "outdir", true, "output directory");
-        output.setRequired(true);
+        output.setRequired(false);
         ops.addOption(output);
 
         Option clear = new Option("c", "clear", false, "clear target directory");
@@ -49,6 +47,10 @@ public class GTDGenerator
         save_ids.setRequired(false);
         ops.addOption(save_ids);
 
+        Option version = new Option("v", "version", false, "show version");
+        version.setRequired(false);
+        ops.addOption(version);
+
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
         CommandLine cmd;
@@ -62,116 +64,113 @@ public class GTDGenerator
             return;
         }
 
-            Map<String, String> inputParams = new HashMap<>();
-            String[] params = cmd.getOptionValues( "parameter" );
-            if( params != null )
-               parseInputParams( params, inputParams );
+        if( cmd.hasOption( "version" ))
+        {
+            System.out.println( "Version " + Version.getVersion() );
+            System.exit( 0 );
+        }
 
-            if( cmd.hasOption( "save-ids" ) ) {
-                inputParams.put(GTDGenerator.SAVE_IDS, "true");
-            }
+        Map<String, String> inputParams = new HashMap<>();
+        String[] params = cmd.getOptionValues("parameter");
+        if (params != null)
+            parseInputParams(params, inputParams);
 
-            String schemeFile = cmd.getOptionValue("scheme");
-            String outputDirPath = cmd.getOptionValue("outdir");
-            File scheme = new File( schemeFile  );
+        if (cmd.hasOption("save-ids")) {
+            inputParams.put(GTDGenerator.SAVE_IDS, "true");
+        }
 
-            if( !scheme.exists( ) )
-            {
-                System.out.println( "Scheme file not found " + schemeFile );
-                System.exit( 1 );
-            }
+        String schemeFile = cmd.getOptionValue("scheme");
+        String outputDirPath = cmd.getOptionValue("outdir");
+        File scheme = new File(schemeFile);
 
-            File dir = new File( outputDirPath );
-            if( !dir.exists() )
-            {
-                System.out.println( "Output dir not found " + outputDirPath );
-                System.exit( 1 );
-            }
+        if (!scheme.exists()) {
+            System.out.println("Scheme file not found " + schemeFile);
+            System.exit(1);
+        }
 
-            if( !dir.isDirectory() )
-            {
-                System.out.println( outputDirPath + " is not a directory" );
-                System.exit( 1 );
-            }
+        File dir = new File(outputDirPath);
+        if (!dir.exists()) {
+            System.out.println("Output dir not found " + outputDirPath);
+            System.exit(1);
+        }
 
-            if( cmd.hasOption( "clear" ))
-            {
-                clearTargerDir( dir );
-            }
+        if (!dir.isDirectory()) {
+            System.out.println(outputDirPath + " is not a directory");
+            System.exit(1);
+        }
 
-            String rawDesc = new String(Files.readAllBytes(Paths.get(schemeFile)));
+        if (cmd.hasOption("clear")) {
+            clearTargerDir(dir);
+        }
 
-            GTDGenerator gen = new GTDGenerator();
+        String rawDesc = new String(Files.readAllBytes(Paths.get(schemeFile)));
+
+        GTDGenerator gen = new GTDGenerator();
 
         try {
 
             Date start = Calendar.getInstance().getTime();
-            SimpleDateFormat fmt = new SimpleDateFormat( "dd.MM.yyyy HH:mm:ss" );
-            String buff = fmt.format( start );
+            SimpleDateFormat fmt = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+            String buff = fmt.format(start);
 
-            System.out.println( buff );
-            gen.generateGraph( inputParams, rawDesc, dir );
+            System.out.println(buff);
+            gen.generateGraph(inputParams, rawDesc, dir);
 
             Date end = Calendar.getInstance().getTime();
-            buff = fmt.format( end );
-            System.out.println( buff );
-            System.out.println( "It has been done within " + (( end.getTime() - start.getTime() ) /1000 ) + " seconds" );
+            buff = fmt.format(end);
+            System.out.println(buff);
+            System.out.println("It has been done within " + ((end.getTime() - start.getTime()) / 1000) + " seconds");
 
-        } catch( Exception e ) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void parseInputParams(String[] params, Map<String, String> inputParams)
-    {
-        for( String par : params )
-        {
-            String[] parts = par.split( "=" );
-            inputParams.put( parts[0].trim(), parts.length > 1 ? parts[1].trim() : "" );
+    private static void parseInputParams(String[] params, Map<String, String> inputParams) {
+        for (String par : params) {
+            String[] parts = par.split("=");
+            inputParams.put(parts[0].trim(), parts.length > 1 ? parts[1].trim() : "");
         }
     }
 
-    private static void clearTargerDir(File dir){
+    private static void clearTargerDir(File dir) {
         File[] items = dir.listFiles();
-        System.out.println( "Clear target directory" );
-        for( File file : items )
+        System.out.println("Clear target directory");
+        for (File file : items)
             file.delete();
-        System.out.println( "Done" );
+        System.out.println("Done");
     }
 
-    void generateGraph(Map<String, String> params, String rawDescription, File dir) throws Exception{
+    void generateGraph(Map<String, String> params, String rawDescription, File dir) throws Exception {
 
         config = new HashMap<>();
 
         // Положить в конфиг рабочую директорию
         String buff = FileSystems.getDefault().getPath(".").toAbsolutePath().toString();
-        buff = buff.substring( 0, buff.length() - 1 );
-        config.put( CURRENT_DIR_KEY, buff );
+        buff = buff.substring(0, buff.length() - 1);
+        config.put(CURRENT_DIR_KEY, buff);
 
-        GraphModel model = GraphModelParser.parse( params, config, rawDescription );
-        boolean result = GraphModelParser.check( model );
+        GraphModel model = GraphModelParser.parse(params, config, rawDescription);
+        boolean result = GraphModelParser.check(model);
 
-        if( !result )
+        if (!result)
             System.exit(1);
 
         try {
 
-            HashMap<String, IGenerator> generators = createGenerators( model );
-            Graph graph = GraphFactory.createGraph( config, dir, model, generators );
-            GraphFactory.createAndWriteEdges( dir, graph, model, generators );
-            writeVertices( dir, model, graph );
+            HashMap<String, IGenerator> generators = createGenerators(model);
+            Graph graph = GraphFactory.createGraph(config, dir, model, generators);
+            GraphFactory.createAndWriteEdges(dir, graph, model, generators);
+            writeVertices(dir, model, graph);
 
-            for( String key : generators.keySet() )
-                generators.get( key ).unInialize();
-        }
-        catch( Exception e )
-        {
+            for (String key : generators.keySet())
+                generators.get(key).unInialize();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void writeVertices(File dir, GraphModel model, Graph graph) throws Exception
-    {
+    private void writeVertices(File dir, GraphModel model, Graph graph) throws Exception {
         /*Map< String, VertexDescription > desc = model.getVertexDescriptions();
 
         for( String key : desc.keySet() )
@@ -185,82 +184,77 @@ public class GTDGenerator
         }*/
     }
 
-    private  HashMap<String,IGenerator> createGenerators(GraphModel model) throws Exception
-    {
+    private HashMap<String, IGenerator> createGenerators(GraphModel model) throws Exception {
         // Мапа генераторв
-        HashMap<String,IGenerator> generators = new HashMap<>();
+        HashMap<String, IGenerator> generators = new HashMap<>();
 
         // Генераторы для вершин
         Set<String> keys = model.getVertexDescriptions().keySet();
 
         // Пошли по вершинам
-        for( String key : keys )
-        {
+        for (String key : keys) {
             // Взять вершину
-            VertexDescription vd = model.getVertexDescription( key );
+            VertexDescription vd = model.getVertexDescription(key);
 
             // Создать генераторы
-            createGeneratorsForElement( vd, generators );
+            createGeneratorsForElement(vd, generators);
         }
 
         // Генераторы для вершин
         keys = model.getTEdgeDescriptionList().keySet();
 
         // Пошли по вершинам
-        for( String key : keys )
-        {
+        for (String key : keys) {
             // Взять вершину
-            TEdgeDescription eld = model.getTEdgeDescription( key );
+            TEdgeDescription eld = model.getTEdgeDescription(key);
 
             // Создать генераторы
-            createGeneratorsForElement( eld, generators );
+            createGeneratorsForElement(eld, generators);
         }
 
         return generators;
     }
 
-    private void createGeneratorsForElement( GraphElementDescription eld, HashMap<String,IGenerator> generators ) throws Exception{
+    private void createGeneratorsForElement(GraphElementDescription eld, HashMap<String, IGenerator> generators) throws Exception {
         Set<String> names = eld.getProperties().keySet();
-        for( String name : names )
-        {
-            GraphObjectProperty gep = eld.getProperties().get( name );
-            String className = getGeneratorClassName( gep.generatorName);
+        for (String name : names) {
+            GraphObjectProperty gep = eld.getProperties().get(name);
+            String className = getGeneratorClassName(gep.generatorName);
 
-            gep.generatorParams.put( "class", gep.generatorName );
-            String hash = GeneratorUtils.makeHash( gep.generatorParams );
-            gep.generatorParams.remove( "class" );
+            gep.generatorParams.put("class", gep.generatorName);
+            String hash = GeneratorUtils.makeHash(gep.generatorParams);
+            gep.generatorParams.remove("class");
             gep.generatorID = hash;
-            if( generators.containsKey( hash ) )
+            if (generators.containsKey(hash))
                 continue;
             else {
-                IGenerator gen = createGenerator( className, gep.generatorParams );
+                IGenerator gen = createGenerator(className, gep.generatorParams);
                 gen.initialize();
-                generators.put( hash, gen );
+                generators.put(hash, gen);
             }
         }
     }
 
     /**
      * Получает имя класса генератора. Сделано чтобы можно было использовать псевдонимы для встроенных генераторов
+     *
      * @param generatorName
      * @return
      */
-    private String getGeneratorClassName(String generatorName)
-    {
+    private String getGeneratorClassName(String generatorName) {
         String className = generatorName;
         // Это встроенный генератор?
-        for( GeneratorAlias alias : GeneratorAlias.values() )
-            if( generatorName.equals( alias.toString() )) {
+        for (GeneratorAlias alias : GeneratorAlias.values())
+            if (generatorName.equals(alias.toString())) {
                 className = alias.className();
                 break;
             }
         return className;
     }
 
-    private IGenerator createGenerator(String name, Map<String,String> params) throws Exception
-    {
-        IGenerator gen = ( IGenerator ) Class.forName( name ).newInstance();
-        gen.setParams( config, params );
+    private IGenerator createGenerator(String name, Map<String, String> params) throws Exception {
+        IGenerator gen = (IGenerator) Class.forName(name).newInstance();
+        gen.setParams(config, params);
         return gen;
     }
 
