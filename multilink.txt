@@ -16,7 +16,7 @@ VERTEX_END
 // Банковский счет
 VERTEX_START
 class: account [-1,1000]
-link: must=(bank) or=(person, university)
+link: must=(bank) or=(person[40], university[60])
 prop: id long_id( for_account )
 prop: name digit_string (length=24)
 prop: currency option_chooser (set="USD,EU,RU,GBP")
@@ -34,7 +34,7 @@ VERTEX_END
 // Люди
 VERTEX_START
 class: person [-1, 500]
-link: may=(university)
+link: may=(university[30])
 own: email [1,2]
 prop: id long_id( for_person )
 prop: name human_name ( male-names=male-names-ru.txt, male-surnames=male-surnames-ru.txt, female-names=female-names-ru.txt, female-surnames=female-surnames-ru.txt)
