@@ -16,7 +16,6 @@ VERTEX_END
 // Банковский счет
 VERTEX_START
 class: account [-1,1000]
-link: must=(bank) or=(person[40], university[60])
 prop: id long_id( for_account )
 prop: name digit_string (length=24)
 prop: currency option_chooser (set="USD,EU,RU,GBP")
@@ -27,6 +26,7 @@ VERTEX_END
 VERTEX_START
 class: university [-1,20]
 link: must=(city)
+own: account [1,2]
 prop: id long_id( for_univer )
 prop: name dictionary ( dictionary=university-ru.txt )
 VERTEX_END
@@ -36,6 +36,7 @@ VERTEX_START
 class: person [-1, 500]
 link: may=(university[30])
 own: email [1,2]
+own: account [1,2]
 prop: id long_id( for_person )
 prop: name human_name ( male-names=male-names-ru.txt, male-surnames=male-surnames-ru.txt, female-names=female-names-ru.txt, female-surnames=female-surnames-ru.txt)
 VERTEX_END
@@ -70,5 +71,5 @@ $inf="dd.MM.yyyy"
 $outf="dd.MM.yyyy HH:mm:ss"
 $dstart=01.01.2017
 $dend=13.09.2018
-null_value=null
+null_value=
 CONFIG_END
