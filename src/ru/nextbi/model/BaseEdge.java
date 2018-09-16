@@ -2,7 +2,7 @@ package ru.nextbi.model;
 
 public abstract class BaseEdge extends GraphElement
 {
-    public enum EdgeKind { TRANSIT, LINK };
+    public enum EdgeKind { TRANSIT, LINK }
 
     String from;
     String to;

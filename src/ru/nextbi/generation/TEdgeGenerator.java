@@ -14,13 +14,13 @@ public class TEdgeGenerator {
 
     static Random rand = new Random();
 
-    protected TEdgeGenerator(){};
+    protected TEdgeGenerator(){}
 
-    public static final long generate(File dir, Graph graph, GraphModel model, TEdgeDescription ted, HashMap< String, IGenerator> generators ) throws Exception
+    public static long generate(File dir, Graph graph, GraphModel model, TEdgeDescription ted, HashMap< String, IGenerator> generators ) throws Exception
     {
         long count = 0;
-        List<Graph.ParentChild> fromList = graph.getVerticesIDList( ted.getFromVertex() );
-        List<Graph.ParentChild> toList = graph.getVerticesIDList( ted.getToVertex() );
+        List<String> fromList = graph.getVerticesIDList( ted.getFromVertex() );
+        List<String> toList = graph.getVerticesIDList( ted.getToVertex() );
 
         TEdgeCSVWriter writer = new TEdgeCSVWriter( dir, ted, ',' );
 
@@ -28,15 +28,15 @@ public class TEdgeGenerator {
         writer.writeHeader( );
 
         // Бежим по всем вершинам from и добавляем ребра
-        for( Graph.ParentChild vfrom : fromList )
+        for( String vfrom : fromList )
         {
-            String vto = getRandomVertex( toList, vfrom.child );
+            String vto = getRandomVertex( toList, vfrom );
             Pair<Integer, Integer> pair = VertexGenerator.getRange(ted.getMin(), ted.getMax());
 
             for( int i = pair.getKey().intValue(); i < pair.getValue().intValue(); i++ ) {
 
                 HashMap<String, String> tedp = VertexGenerator.generateProps(generators, ted);
-                BaseTransitEdge edge = new BaseTransitEdge(vfrom.child, vto);
+                BaseTransitEdge edge = new BaseTransitEdge(vfrom, vto);
                 edge.setProperties(tedp);
                 writer.writeElement( edge );
                 count++;
@@ -47,16 +47,16 @@ public class TEdgeGenerator {
         return count;
     }
 
-    private static String getRandomVertex( List<Graph.ParentChild> array, String notEqual )
+    private static String getRandomVertex( List<String> array, String notEqual )
     {
-        Graph.ParentChild v = null;
+        String v = null;
         do {
             v = getRandomElement( array );
-        } while( v.child.equals(  notEqual ) );
-        return v.child;
+        } while( v.equals(  notEqual ) );
+        return v;
     }
 
-    private static Graph.ParentChild getRandomElement(List<Graph.ParentChild> array)
+    private static String getRandomElement(List<String> array)
     {
         if( array.size() < 2 )
             throw new IllegalArgumentException( "List size too small " );

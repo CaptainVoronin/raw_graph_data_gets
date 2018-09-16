@@ -43,7 +43,7 @@ public abstract class BaseDictionaryGenerator extends AbstractGenerator
         Dictionary d = null;
 
         if( dictionaryMap.keySet().size() > 1 )
-            throw new Exception( "Ambiguity. Don't know which dictionary must be choosen");
+            throw new Exception( "Ambiguity. Don't know which dictionary must be chosen");
 
         if( dictionaryMap.keySet().size() == 0 )
             throw new Exception( "There is no dictionary");

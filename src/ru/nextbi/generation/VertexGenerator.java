@@ -4,6 +4,7 @@ import javafx.util.Pair;
 import ru.nextbi.generation.atomic.IGenerator;
 import ru.nextbi.generation.atomic.IntGenerator;
 import ru.nextbi.model.*;
+import ru.nextbi.writers.OmniWriter;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +13,6 @@ import java.util.Set;
 public class VertexGenerator {
     protected VertexGenerator() {
     }
-
-    ;
 
     /**
      * Генератся все ID всех вершин
@@ -24,16 +23,15 @@ public class VertexGenerator {
      * @param generators
      * @throws Exception
      */
-    public static final void generateIDs(Graph graph, GraphModel model, VertexDescription vd, String parentId, HashMap<String, IGenerator> generators) throws Exception {
+    public static void generateIDs(OmniWriter omniWriter, Graph graph, GraphModel model, VertexDescription vd, String parentClassName, String parentId, HashMap<String, IGenerator> generators) throws Exception {
         IGenerator gen;
-        Graph.ParentChild pc = new Graph.ParentChild();
 
         String id = generateID(generators, vd);
-        pc.child = id;
-        pc.parent = parentId;
 
-        // Добавляем в граф
-        graph.addVertexID(vd.getClassName(), pc);
+        if( parentClassName != null )
+            omniWriter.writeOwnership ( parentClassName, vd.getClassName(), parentId, id );
+
+        graph.addVertexID(vd.getClassName(), id);
 
         // Генерим дочерние вершины, если есть
         for (ChildNodeDescriptor desc : vd.getDependent()) {
@@ -41,9 +39,8 @@ public class VertexGenerator {
 
             Pair<Integer, Integer> pair = getRange(desc.min, desc.max);
             for (int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++)
-                generateIDs(graph, model, dch, id, generators);
+                generateIDs( omniWriter, graph, model, dch, vd.getClassName(), id, generators);
         }
-
     }
 
     private static String generateID(HashMap<String, IGenerator> generators, VertexDescription vd) throws Exception {
@@ -55,8 +52,8 @@ public class VertexGenerator {
         return gen.getValue();
     }
 
-    public static BaseVertex createVertex(Map<String, IGenerator> generators, GraphElementDescription eld, String id, String parentID) throws Exception {
-        BaseVertex v = new BaseVertex(parentID);
+    public static BaseVertex createVertex(Map<String, IGenerator> generators, GraphElementDescription eld, String id/*, String parentID*/) throws Exception {
+        BaseVertex v = new BaseVertex(/*parentID*/);
         v.setProperties(generateProps(generators, eld));
         v.setProperty("id", id);
         return v;

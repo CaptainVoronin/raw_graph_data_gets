@@ -16,10 +16,9 @@ public class GraphModelParser
     static Pattern pattern_range_extractor = Pattern.compile( "\\[(.*?)\\]" );
     static Pattern pattern_get_generator_call = Pattern.compile( "(^[a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)([a-zA-Z][a-zA-Z0-9_]{0,100}\\s*)(\\(\\s*)(.*)(\\s*\\))" );
     static Pattern get_link_arguments = Pattern.compile( "((or|may|must)\\s*=\\s*\\(\\s*)([a-zA-Z][a-zA-Z0-9_\\-\\[\\],\\s]*)+" );
-    //static Pattern get_link_target = Pattern.compile( "(([a-zA-Z][a-zA-Z0-9_]+)(\\[\\s*(([-0-9]+)\\s*,\\s*([-0-9]+))\\s*\\])*\\s*)" );
     static Pattern get_link_target_with_probability = Pattern.compile( "([a-zA-Z][a-zA-Z0-9_]+)(\\[\\s*(([0-9]+)\\s*\\]))*");
 
-    public static final GraphModel parse( Map<String, String> params, Map<String, String> config, String buff) throws Exception{
+    public static GraphModel parse(Map<String, String> params, Map<String, String> config, String buff) throws Exception{
         System.out.println( "Start parsing" );
 
         GraphModel model = new GraphModel();
@@ -164,7 +163,7 @@ public class GraphModelParser
                 else
                 {
                     VertexDescription child = vs.get( cnd.childClassName );
-                    child.setParentClassName( vd.getClassName() );
+                    child.addParentClassName( vd.getClassName() );
                 }
             }
 
@@ -525,7 +524,7 @@ public class GraphModelParser
      * @param row
      * @return
      */
-    private static final String getValueString(String row )
+    private static String getValueString(String row )
     {
         int index = row.indexOf(  ":" );
         String buff = "";
@@ -538,7 +537,7 @@ public class GraphModelParser
     /**
      * Извлекает пару целых значений из строки вида [x,y]
      */
-    final static Pair< Integer, Integer> getRange(String row )
+    static Pair< Integer, Integer> getRange(String row )
     {
         Pair<Integer, Integer> range;
         Matcher m = pattern_range_extractor.matcher( row );

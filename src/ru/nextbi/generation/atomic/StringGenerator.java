@@ -25,7 +25,7 @@ public class StringGenerator extends AbstractGenerator
         String buff = params.get( "length" );
         if( buff != null )
             length = Integer.parseInt( buff );
-    };
+    }
 
     @Override
     public String getValue()

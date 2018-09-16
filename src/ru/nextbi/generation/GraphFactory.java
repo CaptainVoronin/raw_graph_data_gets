@@ -30,25 +30,27 @@ public class GraphFactory {
         }
     }
 
-    public static final Graph createGraph(Map<String, String> config, File dir, GraphModel model, HashMap<String, IGenerator> generators) throws Exception {
+    public static Graph createGraph(Map<String, String> config, File dir, GraphModel model, HashMap<String, IGenerator> generators) throws Exception {
         Graph graph = new Graph();
         OmniWriter omniWriter = new OmniWriter(config, dir);
-        // Сначала генераятся все вершины
-        Set<String> classes = model.getVertexDescriptions().keySet();
 
+        // Сначала создаются все ID всех вершин
+        Set<String> classes = model.getVertexDescriptions().keySet();
         System.out.println("Generating vertices IDs");
         for (String key : classes) {
             VertexDescription desc = model.getVertexDescription(key);
 
             // Отсюда генерятся только вершины без родителей
-            if (desc.getParentClassName() != null)
+            if (desc.getParents().size() != 0)
                 continue;
 
             Pair<Integer, Integer> pair = VertexGenerator.getRange(desc.getMin(), desc.getMax());
 
             for (int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++)
-                VertexGenerator.generateIDs(graph, model, desc, null, generators);
+                VertexGenerator.generateIDs( omniWriter, graph, model, desc, null, null, generators);
         }
+
+        omniWriter.closeLinkWriters();
 
         System.out.println("Done");
 
@@ -58,8 +60,7 @@ public class GraphFactory {
             System.out.println("Done");
         }
 
-        // По готовым ID создаем и пишем экземпляры верш
-        // ин
+        // По готовым ID создаем и пишем экземпляры вершин
         System.out.println("Generating vertices instances");
         classes = model.getVertexDescriptions().keySet();
 
@@ -68,15 +69,16 @@ public class GraphFactory {
             VertexDescription desc = model.getVertexDescription(key);
 
             // Берем IDы и идем по ним
-            List<Graph.ParentChild> ids = graph.getVerticesIDList(key);
+            List<String> ids = graph.getVerticesIDList(key);
 
-            for (Graph.ParentChild pc : ids) {
-                BaseVertex v = VertexGenerator.createVertex(generators, desc, pc.child, pc.parent);
+            for (String id : ids) {
+
+                BaseVertex v = VertexGenerator.createVertex(generators, desc, id );
                 incCount();
-                resolveLinks(graph, desc, v);
+                resolveLinks( omniWriter, graph, desc, v);
                 omniWriter.write(desc, v);
             }
-            omniWriter.forget(key);
+            omniWriter.forgetVertex(key);
         }
         omniWriter.closeAll();
         System.out.println("Done");
@@ -86,41 +88,41 @@ public class GraphFactory {
 
     private static void saveIDs(Map<String, String> config, File dir, GraphModel model, Graph graph) throws IOException {
         for (String className : model.getVertexDescriptions().keySet()) {
-            List<Graph.ParentChild> ids = graph.getVerticesIDList(className);
+            List<String> ids = graph.getVerticesIDList(className);
             FileWriter fw = new FileWriter(dir.getPath() + File.separator + className + "_ids.csv");
-            for (Graph.ParentChild pc : ids) {
-                fw.write(pc.child + "\n");
+            for ( String id : ids) {
+                fw.write(id + "\n");
             }
             fw.close();
         }
     }
 
-    private static void resolveLinks(Graph graph, VertexDescription desc, BaseVertex v) {
+    private static void resolveLinks( OmniWriter omniWriter, Graph graph, VertexDescription desc, BaseVertex v) throws IOException {
 
         for (Link link : desc.getLinks()) {
             switch (link.getCondition()) {
                 case MUST:
                     for (Link.Target target : link.getTargets()) {
-                        List<Graph.ParentChild> ids = graph.getVerticesIDList(target.className);
-                        v.addLink(target.className, ids.get(IntGenerator.getInt(0, ids.size() - 1)).child);
+                        List<String> ids = graph.getVerticesIDList(target.className);
+                        omniWriter.writeOwnership( target.className, desc.getClassName(),
+                                ids.get(IntGenerator.getInt(0, ids.size() - 1) ),
+                                v.getId() );
                     }
                     break;
                 case OR: {
-                    String id = VertexSerializer.NULL_ALIAS;
                     int rnd = IntGenerator.getInt(0, 99);
                     int sum = 0;
 
-                    boolean hasHit = false;
                     for (Link.Target target : link.getTargets()) {
                         sum += target.probability;
-                        if ( rnd <= sum && !hasHit ) {
-                            List<Graph.ParentChild> ids = graph.getVerticesIDList(target.className);
-                            id = ids.get(IntGenerator.getInt(0, ids.size() - 1)).child;
+                        if ( rnd <= sum  ) {
+                            List<String> ids = graph.getVerticesIDList(target.className);
                             // Все, остальные ребра уже не проверяются
-                            hasHit = true;
+                            omniWriter.writeOwnership( target.className, desc.getClassName(),
+                                    ids.get(IntGenerator.getInt(0, ids.size() - 1) ),
+                                    v.getId() );
+                            break;
                         }
-                        v.addLink(target.className, id);
-                        id = VertexSerializer.NULL_ALIAS;
                     }
                 }
                 break;
@@ -130,10 +132,12 @@ public class GraphFactory {
 
                         int rnd = IntGenerator.getInt(0, 99);
                         if (rnd <= target.probability) {
-                            List<Graph.ParentChild> ids = graph.getVerticesIDList(target.className);
-                            id = ids.get(IntGenerator.getInt(0, ids.size() - 1)).child;
+                            List<String> ids = graph.getVerticesIDList(target.className);
+                            omniWriter.writeOwnership( target.className, desc.getClassName(),
+                                    ids.get(IntGenerator.getInt(0, ids.size() - 1) ),
+                                    v.getId() );
+
                         }
-                        v.addLink(target.className, id);
                     }
                 }
                 break;

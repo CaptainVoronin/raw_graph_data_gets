@@ -42,17 +42,10 @@ public class VertexCSVWriter
 
         StringBuilder st = new StringBuilder();
 
-        if( vertexDescription.getParentClassName() != null )
-            st.append( vertexDescription.getParentClassName() ).append( "_id" ).append( delimiter );
-
         Map<String, GraphObjectProperty > props = vertexDescription.getProperties();
 
         for( String key : props.keySet() )
             st.append( props.get( key ).name ).append( delimiter );
-
-        for( Link link : vertexDescription.getLinks() )
-            for( Link.Target target : link.getTargets() )
-                st.append(target.className + "_id").append(delimiter);
 
         st.deleteCharAt( st.length() - 1 );
         st.append( '\n' );

@@ -16,9 +16,9 @@ public class IntGenerator extends AbstractGenerator
     public IntGenerator(){
         min = 1;
         max = 100;
-    };
+    }
 
-    public final static int getInt( int min, int max )
+    public static int getInt(int min, int max )
     {
         return rand.nextInt((max - min) + 1) + min;
     }

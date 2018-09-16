@@ -6,7 +6,7 @@ import java.util.List;
 public class VertexDescription extends GraphElementDescription
 {
 
-    String parentClassName;
+    List<String> parents;
     List<ChildNodeDescriptor> dependent;
     List<Link> links;
 
@@ -14,6 +14,7 @@ public class VertexDescription extends GraphElementDescription
         super( GraphElement.ELEMENT_TYPE.VERTEX );
         dependent = new ArrayList<>();
         links = new ArrayList<>();
+        parents = new ArrayList<>();
 
     }
 
@@ -30,12 +31,13 @@ public class VertexDescription extends GraphElementDescription
         dependent.add( chd );
     }
 
-    public String getParentClassName() {
-        return parentClassName;
+    public List<String> getParents()
+    {
+        return parents;
     }
 
-    public void setParentClassName(String parentClassName) {
-        this.parentClassName = parentClassName;
+    public void addParentClassName(String parentClassName) {
+         parents.add( parentClassName );
     }
 
     public void addLink( Link value )

@@ -12,12 +12,14 @@ public class OmniWriter{
     Map<String, String> config;
     File targetDir;
     Map<String, VertexCSVWriter> writers;
+    private Map<String, LinkWriter> ownershipWiters;
 
     public OmniWriter( Map<String, String> config, File targerDir )
     {
         this.targetDir = targerDir;
         this.config = config;
         writers = new HashMap<>();
+        ownershipWiters = new HashMap<>();
     }
 
     public void write( VertexDescription vd, BaseVertex v ) throws Exception{
@@ -39,17 +41,49 @@ public class OmniWriter{
 
     public void closeAll()
     {
-        for( String className : writers.keySet() )
-            writers.get( className ).close();
+        for( VertexCSVWriter writer : writers.values() )
+            writer.close();
+
+        for( LinkWriter lw : ownershipWiters.values() )
+            lw.close();
     }
 
-    public void forget(String key)
+    public void closeLinkWriters()
+    {
+        for( LinkWriter lw : ownershipWiters.values() )
+            lw.close();
+        ownershipWiters.clear();
+    }
+
+    public void forgetVertex(String key)
     {
         VertexCSVWriter writer = writers.get( key );
         if( writer != null ) {
             writer.close();
             writers.remove( key );
-            writer = null;
         }
+    }
+
+    public void forgetLinkWriter(String key)
+    {
+        LinkWriter writer = ownershipWiters.get( key );
+        if( writer != null ) {
+            writer.close();
+            writers.remove( key );
+        }
+    }
+
+    public void writeOwnership(String parentClassName, String className, String parentId, String id) throws IOException {
+        String key = parentClassName + "-" + className;
+        LinkWriter writer = ownershipWiters.get ( key );
+        if( writer == null )
+        {
+            writer = new LinkWriter( targetDir, parentClassName, className,
+                                      config.getOrDefault( "delimiter", "," ).charAt(0) );
+            writer.init();
+            ownershipWiters.put( key, writer );
+        }
+
+        writer.write( parentId, id );
     }
 }

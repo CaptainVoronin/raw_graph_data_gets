@@ -9,7 +9,7 @@ public abstract class GraphElement
 {
     public final static String KEY_ID = "id";
 
-    public enum ELEMENT_TYPE{ VERTEX, EDGE };
+    public enum ELEMENT_TYPE{ VERTEX, EDGE }
 
     ELEMENT_TYPE type;
     public Map<String, String> getProperties() {
@@ -57,5 +57,5 @@ public abstract class GraphElement
 
     public ELEMENT_TYPE getType(){
         return type;
-    };
+    }
 }

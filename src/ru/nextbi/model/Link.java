@@ -10,7 +10,7 @@ import java.util.List;
  * говорит, что связь доолна обязятельно быть создана с банком и кроме нее либо с person, либо с organisation
  */
 public class Link{
-    public enum Condition{ MUST, OR, MAY };
+    public enum Condition{ MUST, OR, MAY }
 
     /**
      * Усдовия содания связли
