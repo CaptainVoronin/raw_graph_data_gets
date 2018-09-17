@@ -1,4 +1,4 @@
-//Города
+// Города
 VERTEX_START
 class: city [-1,5]
 prop: id long_id (for_city)
@@ -16,6 +16,7 @@ VERTEX_END
 // Банковский счет
 VERTEX_START
 class: account [-1,1000]
+link: must=(bank)
 prop: id long_id( for_account )
 prop: name digit_string (length=24)
 prop: currency option_chooser (set="USD,EU,RU,GBP")
@@ -35,6 +36,7 @@ VERTEX_END
 VERTEX_START
 class: person [-1, 500]
 link: may=(university[30])
+link: must=(city)
 own: email [1,2]
 own: account [1,2]
 prop: id long_id( for_person )
