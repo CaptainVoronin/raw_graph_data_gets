@@ -38,7 +38,7 @@ public class VertexGenerator {
             VertexDescription dch = model.getVertexDescription(desc.childClassName);
 
             Pair<Integer, Integer> pair = getRange(desc.min, desc.max);
-            for (int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++)
+            for (int i = pair.getKey().intValue(); i < pair.getValue().intValue(); i++)
                 generateIDs( omniWriter, graph, model, dch, vd.getClassName(), id, generators);
         }
     }
@@ -84,8 +84,17 @@ public class VertexGenerator {
         return vp;
     }
 
+    /**
+     * Надо помнить, что вершины, для которых количество не задано явно, имеют min = max = -1
+     * @param min
+     * @param max
+     * @return
+     */
     public static Pair<Integer, Integer> getRange(int min, int max) {
         int upperRange, lowerRange;
+
+        if( max < 0 )
+            max = 1;
 
         // Создавать в рамках того количества, который указан в описании дочернего узла
         if (min < 0) {

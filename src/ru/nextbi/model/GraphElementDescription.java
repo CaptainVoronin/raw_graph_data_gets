@@ -26,7 +26,7 @@ public class GraphElementDescription
     {
         props = new HashMap<>();
         min = -1;
-        max = 1;
+        max = -1;
         this.type = type;
     }
 

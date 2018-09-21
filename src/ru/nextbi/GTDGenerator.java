@@ -161,7 +161,7 @@ public class GTDGenerator {
             HashMap<String, IGenerator> generators = createGenerators(model);
             Graph graph = GraphFactory.createGraph(config, dir, model, generators);
             GraphFactory.createAndWriteEdges(dir, graph, model, generators);
-            writeVertices(dir, model, graph);
+            //writeVertices(dir, model, graph);
 
             for (String key : generators.keySet())
                 generators.get(key).unInialize();
@@ -170,8 +170,8 @@ public class GTDGenerator {
         }
     }
 
-    private void writeVertices(File dir, GraphModel model, Graph graph) throws Exception {
-        /*Map< String, VertexDescription > desc = model.getVertexDescriptions();
+/*    private void writeVertices(File dir, GraphModel model, Graph graph) throws Exception {
+        *//*Map< String, VertexDescription > desc = model.getVertexDescriptions();
 
         for( String key : desc.keySet() )
         {
@@ -181,8 +181,8 @@ public class GTDGenerator {
             VertexCSVWriter vw = new VertexCSVWriter( dir, filename, ',' );
             vw.write( vd, vertices  );
             vertices.clear();
-        }*/
-    }
+        }*//*
+    }*/
 
     private HashMap<String, IGenerator> createGenerators(GraphModel model) throws Exception {
         // Мапа генераторв
