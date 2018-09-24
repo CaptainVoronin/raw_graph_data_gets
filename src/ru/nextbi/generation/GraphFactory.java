@@ -37,6 +37,7 @@ public class GraphFactory{
         // Сначала создаются все ID всех вершин
         Set<String> classes = model.getVertexDescriptions().keySet();
         System.out.println("Generating vertices IDs");
+
         for( String key : classes ) {
             VertexDescription desc = model.getVertexDescription(key);
 
@@ -47,7 +48,7 @@ public class GraphFactory{
             Pair<Integer, Integer> pair = VertexGenerator.getRange(desc.getMin(), desc.getMax());
 
             for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ )
-                VertexGenerator.generateIDs(omniWriter, graph, model, desc, null, null, generators);
+                VertexGenerator.generateIDs(omniWriter, graph, model, desc, null, null, generators );
         }
 
         omniWriter.closeLinkWriters();
@@ -163,10 +164,10 @@ public class GraphFactory{
             System.out.println("Generate " + key);
             TEdgeDescription ted = model.getTEdgeDescription(key);
 
-            Pair<Integer, Integer> pair = VertexGenerator.getRange(ted.getMin(), ted.getMax());
+            //Pair<Integer, Integer> pair = VertexGenerator.getRange(ted.getMin(), ted.getMax());
             long count = 0;
-            for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ )
-                count += TEdgeGenerator.generate(dir, graph, model, ted, generators);
+            //for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ )
+            count += TEdgeGenerator.generate(dir, graph, model, ted, generators);
 
             System.out.println("" + count + " has been written");
         }

@@ -36,8 +36,7 @@ public class TEdgeGenerator{
                 for( String vfrom : fromList ) {
                     String vto = getRandomVertex(toList, vfrom);
                     Pair<Integer, Integer> pair = VertexGenerator.getRange(ted.getMin(), ted.getMax());
-
-                    for( int i = pair.getKey().intValue(); i < pair.getValue().intValue(); i++ ) {
+                    for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ ) {
 
                         HashMap<String, String> tedp = VertexGenerator.generateProps(generators, ted);
                         BaseTransitEdge edge = new BaseTransitEdge(vfrom, vto);

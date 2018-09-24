@@ -23,7 +23,7 @@ public class VertexGenerator {
      * @param generators
      * @throws Exception
      */
-    public static void generateIDs(OmniWriter omniWriter, Graph graph, GraphModel model, VertexDescription vd, String parentClassName, String parentId, HashMap<String, IGenerator> generators) throws Exception {
+    public static void generateIDs(OmniWriter omniWriter, Graph graph, GraphModel model, VertexDescription vd, String parentClassName, String parentId, HashMap<String, IGenerator> generators ) throws Exception {
         IGenerator gen;
 
         String id = generateID(generators, vd);
@@ -38,8 +38,8 @@ public class VertexGenerator {
             VertexDescription dch = model.getVertexDescription(desc.childClassName);
 
             Pair<Integer, Integer> pair = getRange(desc.min, desc.max);
-            for (int i = pair.getKey().intValue(); i < pair.getValue().intValue(); i++)
-                generateIDs( omniWriter, graph, model, dch, vd.getClassName(), id, generators);
+            for (int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++)
+                generateIDs( omniWriter, graph, model, dch, vd.getClassName(), id, generators );
         }
     }
 
