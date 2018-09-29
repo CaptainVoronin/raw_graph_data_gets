@@ -8,7 +8,8 @@ public class ChildNodeDescriptor
 
     public ChildNodeDescriptor()
     {
-        min = 1;
-        max = 1;
+        // Это будет считаться неинициализированными значениями
+        min = -1;
+        max = -1;
     }
 }

@@ -182,6 +182,33 @@ public class GraphModelParser
             }
         }
 
+        // Проверить количества, которые надо сгенерить
+        for( VertexDescription vd : model.getVertexDescriptions().values())
+        {
+            boolean quantityIsSet = vd.max > 0;
+
+            for( String parent : vd.getParents() )
+            {
+                VertexDescription pv = model.getVertexDescription( parent );
+
+                for( int i = 0; i < pv.getDependent().size(); i++ )
+                {
+                    if( pv.getDependent().get( i ).max > 0 ) {
+                        quantityIsSet = true;
+                        break;
+                    }
+                }
+                if( quantityIsSet )
+                    break;
+            }
+
+            if( !quantityIsSet )
+            {
+                System.out.println( "Warning. Quantity for the vertex \"" + vd.getClassName() + "\" is not set. It will be the only one instance of this class.");
+            }
+        }
+
+
         // Пповерить ссылки
 
         Map<String, TEdgeDescription> teds = model.getTEdgeDescriptionList();
@@ -403,7 +430,7 @@ public class GraphModelParser
     }
 
     private static void parseClassString( GraphElementDescription eld , String row) throws Exception{
-        Pattern p = Pattern.compile( "class\\s*:\\s*([a-zA-Z][a-zA-Z0-9_]*)\\s*(\\[\\s*(([-0-9]+)\\s*,\\s*([-0-9]+))\\s*\\])*");
+        Pattern p = Pattern.compile( "class\\s*:\\s*([a-zA-Z][a-zA-Z0-9_]*)\\s*(\\[\\s*((.+)\\s*,\\s*(.+))\\s*\\])*");
         Matcher m = p.matcher( row.trim() );
         if( m.find() )
         {
@@ -419,7 +446,7 @@ public class GraphModelParser
                     eld.setMax(Integer.parseInt(m.group(5)));
                 } catch( Exception e )
                 {
-                    System.out.println( "Incorrect class declaration " + row );
+                    System.out.println( "Error. Incorrect arguments declaration in \"" + row + "\"");
                     throw e;
                 }
             }

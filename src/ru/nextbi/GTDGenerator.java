@@ -21,6 +21,7 @@ public class GTDGenerator {
     public static final String CASH_DEFAULT = "cash_default";
     public static final String SAVE_IDS = "save-ids";
     public static final String NULL_VALUE_SEQUENCE = "null_value";
+    public static final String DELIMITER = "delimiter";
 
     Map<String, String> config;
 
@@ -50,6 +51,7 @@ public class GTDGenerator {
         Option version = new Option("v", "version", false, "show version");
         version.setRequired(false);
         ops.addOption(version);
+
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -161,7 +163,6 @@ public class GTDGenerator {
             HashMap<String, IGenerator> generators = createGenerators(model);
             Graph graph = GraphFactory.createGraph(config, dir, model, generators);
             GraphFactory.createAndWriteEdges(dir, graph, model, generators);
-            writeVertices(dir, model, graph);
 
             for (String key : generators.keySet())
                 generators.get(key).unInialize();
@@ -170,8 +171,8 @@ public class GTDGenerator {
         }
     }
 
-    private void writeVertices(File dir, GraphModel model, Graph graph) throws Exception {
-        /*Map< String, VertexDescription > desc = model.getVertexDescriptions();
+/*    private void writeVertices(File dir, GraphModel model, Graph graph) throws Exception {
+        *//*Map< String, VertexDescription > desc = model.getVertexDescriptions();
 
         for( String key : desc.keySet() )
         {
@@ -181,8 +182,8 @@ public class GTDGenerator {
             VertexCSVWriter vw = new VertexCSVWriter( dir, filename, ',' );
             vw.write( vd, vertices  );
             vertices.clear();
-        }*/
-    }
+        }*//*
+    }*/
 
     private HashMap<String, IGenerator> createGenerators(GraphModel model) throws Exception {
         // Мапа генераторв
