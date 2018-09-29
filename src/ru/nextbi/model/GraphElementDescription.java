@@ -62,4 +62,8 @@ public class GraphElementDescription
         this.props = props;
     }
 
+    public GraphObjectProperty getIDProperty()
+    {
+        return props.get( GraphElement.KEY_ID );
+    }
 }
