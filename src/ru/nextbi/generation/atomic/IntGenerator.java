@@ -1,5 +1,8 @@
 package ru.nextbi.generation.atomic;
 
+import ru.nextbi.generation.Graph;
+import ru.nextbi.generation.GraphObjectProperty;
+
 import java.util.Map;
 import java.util.Random;
 
@@ -37,6 +40,12 @@ public class IntGenerator extends AbstractGenerator
     @Override
     public String getValue(){
         return Integer.toString( getInt( min, max ) );
+    }
+
+    @Override
+    public GraphObjectProperty.Type getDataType()
+    {
+        return GraphObjectProperty.Type.INT;
     }
 
 }

@@ -1,5 +1,7 @@
 package ru.nextbi.generation.atomic;
 
+import ru.nextbi.generation.GraphObjectProperty;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -55,5 +57,10 @@ public class DateTimeGenerator  extends AbstractGenerator{
         long res = ThreadLocalRandom.current().nextLong( start.getTime(), end.getTime() );
         dt.setTime( res );
         return outFormatter.format( dt );
+    }
+
+    @Override
+    public GraphObjectProperty.Type getDataType() {
+        return GraphObjectProperty.Type.TIMESTAMP;
     }
 }

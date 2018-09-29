@@ -1,7 +1,9 @@
 package ru.nextbi.model;
 
 import javafx.util.Pair;
+import ru.nextbi.GTDGenerator;
 import ru.nextbi.generation.GraphObjectProperty;
+import ru.nextbi.generation.atomic.IGenerator;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -398,8 +400,6 @@ public class GraphModelParser
             default:
                 break;
         }
-
-
     }
 
     private static void parseClassString( GraphElementDescription eld , String row) throws Exception{
@@ -452,8 +452,7 @@ public class GraphModelParser
         vd.addDependent( chd );
     }
 
-    private static GraphObjectProperty getProperty(int rowIndex, String row)
-    {
+    private static GraphObjectProperty getProperty(int rowIndex, String row) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         String val = getValueString( row );
         //val = "id long_id( initial=10000 )";
 
@@ -514,7 +513,9 @@ public class GraphModelParser
                 paramsMap.put( name, value );
             }
         }
-
+        String className = GTDGenerator.getGeneratorClassName(gProperty.generatorName);
+        IGenerator gen = (IGenerator) Class.forName( className ).newInstance();
+        gProperty.type = gen.getDataType();
         gProperty.generatorParams = paramsMap;
         return gProperty;
     }

@@ -1,5 +1,7 @@
 package ru.nextbi.generation.atomic;
 
+import ru.nextbi.generation.GraphObjectProperty;
+
 import java.util.Map;
 
 public class LongIDGenerator extends AbstractGenerator{
@@ -20,4 +22,8 @@ public class LongIDGenerator extends AbstractGenerator{
         return Long.toString( ++current );
     }
 
+    @Override
+    public GraphObjectProperty.Type getDataType() {
+        return GraphObjectProperty.Type.LONG;
+    }
 }

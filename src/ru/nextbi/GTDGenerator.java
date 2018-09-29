@@ -241,7 +241,7 @@ public class GTDGenerator {
      * @param generatorName
      * @return
      */
-    private String getGeneratorClassName(String generatorName) {
+    public static String getGeneratorClassName(String generatorName) {
         String className = generatorName;
         // Это встроенный генератор?
         for (GeneratorAlias alias : GeneratorAlias.values())

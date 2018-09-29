@@ -1,5 +1,7 @@
 package ru.nextbi.generation.atomic;
 
+import ru.nextbi.generation.GraphObjectProperty;
+
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,5 +19,10 @@ public class UUIDIDGenerator extends AbstractGenerator{
     @Override
     public void initialize() throws Exception{
 
+    }
+
+    @Override
+    public GraphObjectProperty.Type getDataType() {
+        return GraphObjectProperty.Type.UUID;
     }
 }
