@@ -22,9 +22,9 @@ public class VertexDescription extends GraphElementDescription
         return dependent;
     }
 
-    public void setDependent(List<ChildNodeDescriptor> dependent) {
-        this.dependent = dependent;
-    }
+//    public void setDependent(List<ChildNodeDescriptor> dependent) {
+//        this.dependent = dependent;
+//    }
 
     public void addDependent(ChildNodeDescriptor chd)
     {

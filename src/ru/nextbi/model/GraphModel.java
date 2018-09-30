@@ -1,6 +1,10 @@
 package ru.nextbi.model;
 
+import ru.nextbi.generation.GraphObjectProperty;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -51,5 +55,33 @@ public class GraphModel
 
     public TEdgeDescription getTEdgeDescription(String key) {
         return tEdgeDescriptionList.get( key );
+    }
+
+    public List<SimpleEdge> getImplicitEdges()
+    {
+        List<SimpleEdge> edges = new ArrayList<>();
+
+        for( VertexDescription vd : vertexDescriptionList.values() )
+        {
+            if( vd.getParents().size() != 0 ) {
+                for( String parentName : vd.getParents() ) {
+                    SimpleEdge se = new SimpleEdge( vertexDescriptionList.get( parentName ), vd );
+                    edges.add( se );
+                }
+            }
+
+            if( vd.getLinks().size() != 0 )
+            {
+                for( Link link : vd.getLinks() )
+                {
+                    for(Link.Target target : link.getTargets() ) {
+                        SimpleEdge se = new SimpleEdge( vd, vertexDescriptionList.get( target.className ) );
+                        edges.add( se );
+                    }
+                }
+            }
+        }
+
+        return edges;
     }
 }

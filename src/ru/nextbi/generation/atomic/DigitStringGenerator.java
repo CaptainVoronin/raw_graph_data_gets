@@ -1,5 +1,7 @@
 package ru.nextbi.generation.atomic;
 
+import ru.nextbi.generation.GraphObjectProperty;
+
 import java.util.Map;
 
 public class DigitStringGenerator implements IGenerator
@@ -32,5 +34,10 @@ public class DigitStringGenerator implements IGenerator
     @Override
     public void unInialize(){
 
+    }
+
+    @Override
+    public GraphObjectProperty.Type getDataType() {
+        return GraphObjectProperty.Type.VARCHAR;
     }
 }

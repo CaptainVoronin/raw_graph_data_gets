@@ -74,7 +74,7 @@ public class OmniWriter{
     }
 
     public void writeOwnership(String parentClassName, String className, String parentId, String id) throws IOException {
-        String key = parentClassName + "-" + className;
+        String key = "link_" + parentClassName + "_" + className;
         LinkWriter writer = ownershipWiters.get ( key );
         if( writer == null )
         {

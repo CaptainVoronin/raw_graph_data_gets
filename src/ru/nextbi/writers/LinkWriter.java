@@ -18,17 +18,17 @@ public class LinkWriter {
     public LinkWriter(File targetDir, String parent, String child, char delimiter )
     {
         this.targetDir = targetDir;
-        parentName = parent + "_id";
-        childName = child + "_id";
+        parentName = parent;
+        childName = child;
         this.delimiter = delimiter;
         stringBuilder = new StringBuilder();
     }
 
     public void init( ) throws IOException
     {
-        String filename = targetDir.getPath() + File.separator + parentName + "-" + childName + ".csv";
+        String filename = targetDir.getPath() + File.separator + "link_" + parentName + "_" + childName + ".csv";
         writer = new FileWriter( filename );
-        stringBuilder.append( parentName ).append( delimiter ).append( childName ).append( '\n' );
+        stringBuilder.append( parentName ).append( "_id" ).append( delimiter ).append( childName ).append( "_id" ).append( '\n' );
         writer.write( stringBuilder.toString() );
         stringBuilder.setLength( 0 );
     }
