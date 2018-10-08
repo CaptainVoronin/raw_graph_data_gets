@@ -231,7 +231,7 @@ public class GraphModelParser
         }
 
         if( !result )
-            return result;
+            return false;
 
         // Поиск циклических зависимостей
         result = checkCycles( model );
@@ -526,6 +526,7 @@ public class GraphModelParser
                     name = args[k].substring( 0, index ).trim();
                     value = args[k].substring( index + 1, args[k].length() );
 
+                    // TODO : странная конструкция
                     if( value != null )
                     {
                         value = value.trim();
