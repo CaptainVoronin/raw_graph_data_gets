@@ -34,11 +34,12 @@ public class VertexGenerator {
         graph.addVertexID(vd.getClassName(), id);
 
         // Генерим дочерние вершины, если есть
+        Counter cntr = new Counter ( );
         for (ChildNodeDescriptor desc : vd.getDependent()) {
             VertexDescription dch = model.getVertexDescription(desc.childClassName);
 
-            Pair<Integer, Integer> pair = getRange(desc.min, desc.max);
-            for (int i = pair.getKey().intValue(); i < pair.getValue().intValue(); i++)
+            cntr.init( desc.min, desc.max );
+            while ( cntr.hasNext() )
                 generateIDs( omniWriter, graph, model, dch, vd.getClassName(), id, generators );
         }
     }

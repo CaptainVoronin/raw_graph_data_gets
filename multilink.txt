@@ -1,13 +1,13 @@
 //Города
 VERTEX_START
-class: city [-1,5]
+class: city [-1,10]
 prop: id long_id (for_city)
 prop: city dictionary( dictionary=ru-cities.txt )
 VERTEX_END
 
 // Банк
 VERTEX_START
-class: bank [-1,10]
+class: bank [-1,100]
 link: must=(city)
 prop: id long_id (for_bank)
 prop: name dictionary( dictionary=bank-list.txt )
@@ -15,7 +15,9 @@ VERTEX_END
 
 // Банковский счет
 VERTEX_START
-class: account [-1,1000]
+//class: account [-1,$a_count]
+class: account
+link: must=(bank)
 prop: id long_id( for_account )
 prop: name digit_string (length=24)
 prop: currency option_chooser (set="USD,EU,RU,GBP")
@@ -24,7 +26,7 @@ VERTEX_END
 
 // ВУЗы
 VERTEX_START
-class: university [-1,20]
+class: university [-1,100]
 link: must=(city)
 own: account [1,2]
 prop: id long_id( for_univer )
@@ -33,8 +35,9 @@ VERTEX_END
 
 // Люди
 VERTEX_START
-class: person [-1, 500]
+class: person [-1, $p_count]
 link: may=(university[30])
+link: must=(city)
 own: email [1,2]
 own: account [1,2]
 prop: id long_id( for_person )
@@ -70,6 +73,6 @@ CONFIG_START
 $inf="dd.MM.yyyy"
 $outf="dd.MM.yyyy HH:mm:ss"
 $dstart=01.01.2017
-$dend=13.09.2018
+$dend=21.12.2018
 null_value=
 CONFIG_END
