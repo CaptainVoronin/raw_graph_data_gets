@@ -164,7 +164,7 @@ public class GraphFactory{
 
     public static void createAndWriteEdges(File dir, Graph graph, GraphModel model, HashMap<String, IGenerator> generators) throws Exception{
         System.out.println("Generating edges");
-
+        count = 0;
         // Потом генерятся все ребра
         Set<String> classes = model.getTEdgeDescriptionList().keySet();
 

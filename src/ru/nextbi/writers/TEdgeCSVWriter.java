@@ -16,6 +16,8 @@ public class TEdgeCSVWriter {
     TEdgeSerializer serializer;
     TEdgeDescription ted;
     FileWriter fw;
+    int flushLimit;
+    int count;
 
     public TEdgeCSVWriter( File targetDir, TEdgeDescription ted, char delimiter ) throws IOException {
         dir = targetDir;
@@ -26,6 +28,8 @@ public class TEdgeCSVWriter {
         serializer.setDelimiter( delimiter );
         File f = new File( filename );
         fw = new FileWriter( f );
+        count = 0;
+        flushLimit = 10000;
     }
 
     public void writeElement( BaseEdge edge ) throws Exception {
@@ -51,6 +55,13 @@ public class TEdgeCSVWriter {
         st.append( '\n' );
 
         fw.write( st.toString() );
+        if( count >= flushLimit )
+        {
+            fw.flush();
+            count = 0;
+        }
+        else
+            count++;
     }
 
     public void close()

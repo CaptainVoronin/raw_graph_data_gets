@@ -6,9 +6,7 @@ import ru.nextbi.model.BaseVertex;
 import ru.nextbi.model.Link;
 import ru.nextbi.model.VertexDescription;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 
@@ -19,7 +17,8 @@ public class VertexCSVWriter
     char delimiter;
     VertexSerializer vertexSerializer;
     VertexDescription vertexDescription;
-    FileWriter fileWriter;
+    FileOutputStream fous;
+
 
     public VertexCSVWriter( File targetDir, VertexDescription vertexDescription, Map<String,String> config ) throws IOException{
         dir = targetDir;
@@ -31,11 +30,13 @@ public class VertexCSVWriter
         vertexSerializer = new VertexSerializer();
         vertexSerializer.setDelimiter( delimiter );
         vertexSerializer.setNullValueSequence( config.getOrDefault(GTDGenerator.NULL_VALUE_SEQUENCE, "" ) );
-        fileWriter = new FileWriter( this.filename  );
+
+        fous = new FileOutputStream ( this.filename );
+        //fous.write( '\ufeff' );
     }
 
     public void writeElement( BaseVertex v) throws Exception {
-        fileWriter.write(vertexSerializer.vertexToString(vertexDescription, v));
+        fous.write( vertexSerializer.vertexToString(vertexDescription, v).getBytes( ));
     }
 
     public void writeHeader() throws IOException {
@@ -50,14 +51,15 @@ public class VertexCSVWriter
         st.deleteCharAt( st.length() - 1 );
         st.append( '\n' );
 
-        fileWriter.write( st.toString() );
-    }
+        fous.write( st.toString().getBytes( ) );
+
+     }
 
     public void close()
     {
-        if( fileWriter != null )
+        if( fous != null )
             try {
-                fileWriter.close();
+                fous.close();
             } catch( IOException e ) {
                 e.printStackTrace();
             }
