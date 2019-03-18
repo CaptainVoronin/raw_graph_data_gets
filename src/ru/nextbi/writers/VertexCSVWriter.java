@@ -3,14 +3,12 @@ package ru.nextbi.writers;
 import ru.nextbi.GTDGenerator;
 import ru.nextbi.generation.GraphObjectProperty;
 import ru.nextbi.model.BaseVertex;
-import ru.nextbi.model.Link;
 import ru.nextbi.model.VertexDescription;
 
 import java.io.*;
-import java.util.List;
 import java.util.Map;
 
-public class VertexCSVWriter
+public class VertexCSVWriter implements IVertextWriter
 {
     File dir;
     String filename;
