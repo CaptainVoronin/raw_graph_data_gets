@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-public class TEdgeCSVWriter {
+public class TEdgeCSVWriter implements IEdgeWriter
+{
     File dir;
     String filename;
     char delimiter;
