@@ -1,22 +1,24 @@
 //Города
 VERTEX_START
 class: city [-1,5]
-prop: id long_id (for_city)
+own : bank [2,5]
+own: person [10, 100]
+prop: id long_id ()
 prop: city dictionary( dictionary=ru-cities.txt )
 VERTEX_END
 
 // Банк
 VERTEX_START
-class: bank [-1,10]
-link: must=(city)
-prop: id long_id (for_bank)
+class: bank 
+prop: id long_id ()
 prop: name dictionary( dictionary=bank-list.txt )
 VERTEX_END
 
 // Банковский счет
 VERTEX_START
-class: account [-1,1000]
-prop: id long_id( for_account )
+class: account
+link: must=(bank)
+prop: id long_id( )
 prop: name digit_string (length=24)
 prop: currency option_chooser (set="USD,EU,RU,GBP")
 prop: created datetime (start=$dstart, end=$dend, in-format=$inf, out-format=$outf)
@@ -24,27 +26,27 @@ VERTEX_END
 
 // ВУЗы
 VERTEX_START
-class: university [-1,20]
+class: university [-1,50]
 link: must=(city)
 own: account [1,2]
-prop: id long_id( for_univer )
+prop: id long_id( )
 prop: name dictionary ( dictionary=university-ru.txt )
 VERTEX_END
 
 // Люди
 VERTEX_START
-class: person [-1, 500]
+class: person
 link: may=(university[30])
 own: email [1,2]
 own: account [1,2]
-prop: id long_id( for_person )
+prop: id long_id( )
 prop: name human_name ( male-names=male-names-ru.txt, male-surnames=male-surnames-ru.txt, female-names=female-names-ru.txt, female-surnames=female-surnames-ru.txt)
 VERTEX_END
 
 // Почтовые ящики
 VERTEX_START
 class: email
-prop: id long_id( for_email )
+prop: id long_id( )
 prop: address email( name-file=eng-words.txt, servers="gmail.com,yandex.ru,mail.ru,yahoo.com,rambler.ru,nextbi.ru,infosec.ru" )
 VERTEX_END
 
@@ -61,7 +63,7 @@ T_EDGE_START
 class: transaction [0,3]
 from: account
 to: account
-prop: id long_id( for_transaction )
+prop: id long_id( )
 prop: amount number ( min=100, max=1000000000 )
 prop: send_date datetime (start=$dstart, end=$dend, in-format=$inf, out-format=$outf)
 T_EDGE_END

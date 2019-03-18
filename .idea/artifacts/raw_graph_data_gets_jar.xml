@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="raw_graph_data_gets:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/raw_graph_data_gets_jar</output-path>
-    <root id="archive" name="gtdgen.jar">
-      <element id="module-output" name="raw_graph_data_gets" />
-      <element id="extracted-dir" path="$PROJECT_DIR$/lib/commons-cli-1.4.jar" path-in-jar="/" />
-    </root>
-  </artifact>
-</component>

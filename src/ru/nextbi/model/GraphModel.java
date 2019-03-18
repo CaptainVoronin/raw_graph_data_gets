@@ -75,7 +75,7 @@ public class GraphModel
                 for( Link link : vd.getLinks() )
                 {
                     for(Link.Target target : link.getTargets() ) {
-                        SimpleEdge se = new SimpleEdge( vd, vertexDescriptionList.get( target.className ) );
+                        SimpleEdge se = new SimpleEdge( vertexDescriptionList.get( target.className ), vd );
                         edges.add( se );
                     }
                 }
