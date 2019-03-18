@@ -8,15 +8,12 @@ import java.util.Map;
 public class BaseVertex extends GraphElement
 {
 
-    //String parentID;
-
     // ID'ы
     Map<String, String> links;
 
-    public BaseVertex( /*String parentID*/ )
+    public BaseVertex(  )
     {
         super( ELEMENT_TYPE.VERTEX );
-      //  this.parentID = parentID;
         links = new HashMap<>();
     }
 
@@ -25,13 +22,6 @@ public class BaseVertex extends GraphElement
     {
         return ELEMENT_TYPE.VERTEX;
     }
-
-/*
-    public String getParent()
-    {
-        return parentID;
-    }
-*/
 
     public void addLink(String className, String link)
     {
