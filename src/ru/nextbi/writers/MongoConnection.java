@@ -31,10 +31,11 @@ public class MongoConnection {
         return  db.getCollection( collectionName );
     }
 
-    public void createCollectionIfNotExists( String name )
+    public MongoCollection<Document> createCollectionIfNotExists( String name )
     {
         if( !existsCollection( name ) )
             db.createCollection( name );
+        return db.getCollection( name );
     }
 
     public void insertObject( String collectionName, Document obj )

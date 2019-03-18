@@ -1,13 +1,29 @@
 package ru.nextbi.writers;
 
+import com.mongodb.client.MongoCollection;
 import ru.nextbi.model.BaseEdge;
+import ru.nextbi.model.BaseVertex;
+import ru.nextbi.model.VertexDescription;
 
 import java.io.IOException;
 
 public class TMongoEdgeWriter implements IEdgeWriter{
-    @Override
-    public void writeElement(BaseEdge edge) throws Exception{
 
+    MongoConnection connection;
+    VertexDescription vertexDescription;
+    MongoCollection collection;
+
+    public TMongoEdgeWriter (MongoConnection connection, VertexDescription vertexDescription )
+    {
+        this.connection = connection;
+        this.vertexDescription = vertexDescription;
+        collection = connection.createCollectionIfNotExists( vertexDescription.getClassName() );
+    }
+
+    @Override
+    public void writeElement( BaseEdge v ) throws Exception{
+
+        collection.insertOne( DBObjectHelper.edgeToDBObject( vertexDescription, v.getProperties() ) );
     }
 
     @Override
