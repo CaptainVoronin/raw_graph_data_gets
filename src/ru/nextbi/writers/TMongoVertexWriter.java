@@ -4,8 +4,15 @@ import ru.nextbi.model.BaseVertex;
 
 import java.io.IOException;
 
-public class TMongoVertexVriter implements IVertextWriter
+public class TMongoVertexWriter implements IVertextWriter
 {
+    MongoConnection connection;
+
+    public TMongoVertexWriter(MongoConnection connection )
+    {
+        this.connection = connection;
+    }
+
     @Override
     public void writeElement(BaseVertex v) throws Exception{
 
