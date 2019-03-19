@@ -1,6 +1,8 @@
 package ru.nextbi.generation;
 
 import javafx.util.Pair;
+import ru.nextbi.Counter;
+import ru.nextbi.PrinterFactory;
 import ru.nextbi.generation.atomic.IGenerator;
 import ru.nextbi.generation.atomic.IntGenerator;
 import ru.nextbi.model.*;
@@ -34,13 +36,15 @@ public class VertexGenerator {
         graph.addVertexID(vd.getClassName(), id);
 
         // Генерим дочерние вершины, если есть
-        Counter cntr = new Counter ( );
         for (ChildNodeDescriptor desc : vd.getDependent()) {
             VertexDescription dch = model.getVertexDescription(desc.childClassName);
-
-            cntr.init( desc.min, desc.max );
-            while ( cntr.hasNext() )
-                generateIDs( omniWriter, graph, model, dch, vd.getClassName(), id, generators );
+            Counter counter = new Counter(PrinterFactory.getPrinter(), desc.childClassName, 10000 );
+            Pair<Integer, Integer> pair = getRange(desc.min, desc.max);
+            for (int i = pair.getKey().intValue(); i < pair.getValue().intValue(); i++) {
+                generateIDs(omniWriter, graph, model, dch, vd.getClassName(), id, generators);
+                counter.inc();
+            }
+            counter.printTotal();
         }
     }
 

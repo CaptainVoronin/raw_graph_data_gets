@@ -1,7 +1,7 @@
 package ru.nextbi.generation;
 
 import javafx.util.Pair;
-import ru.nextbi.GTDGenerator;
+import ru.nextbi.*;
 import ru.nextbi.generation.atomic.IGenerator;
 import ru.nextbi.generation.atomic.IntGenerator;
 import ru.nextbi.model.*;
@@ -31,6 +31,9 @@ public class GraphFactory{
     }
 
     public static Graph createGraph(Map<String, String> config, File dir, GraphModel model, HashMap<String, IGenerator> generators) throws Exception{
+        AInfoPrinter printer = PrinterFactory.getPrinter();
+        ( new Thread( printer )).start();
+
         Graph graph = new Graph();
         OmniWriter omniWriter = new OmniWriter(config, dir);
 
@@ -47,8 +50,13 @@ public class GraphFactory{
 
             Pair<Integer, Integer> pair = VertexGenerator.getRange(desc.getMin(), desc.getMax());
 
-            for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ )
-                VertexGenerator.generateIDs(omniWriter, graph, model, desc, null, null, generators );
+            //Counter counter = new Counter( printer, key, 10000 );
+
+            for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ ) {
+                VertexGenerator.generateIDs(omniWriter, graph, model, desc, null, null, generators);
+//                counter.inc();
+            }
+  //          counter.printTotal();
         }
 
         omniWriter.closeLinkWriters();
@@ -89,7 +97,7 @@ public class GraphFactory{
         }
         omniWriter.closeAll();
         System.out.println("Done");
-
+        printer.terminate();
         return graph;
     }
 

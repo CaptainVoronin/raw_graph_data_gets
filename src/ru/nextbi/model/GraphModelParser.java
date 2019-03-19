@@ -1,5 +1,6 @@
 package ru.nextbi.model;
 
+import com.sun.istack.internal.NotNull;
 import javafx.util.Pair;
 import ru.nextbi.GTDGenerator;
 import ru.nextbi.generation.GraphObjectProperty;
@@ -20,7 +21,7 @@ public class GraphModelParser
     static Pattern get_link_arguments = Pattern.compile( "((or|may|must)\\s*=\\s*\\(\\s*)([a-zA-Z][a-zA-Z0-9_\\-\\[\\],\\s]*)+" );
     static Pattern get_link_target_with_probability = Pattern.compile( "([a-zA-Z][a-zA-Z0-9_]+)(\\[\\s*(([0-9]+)\\s*\\]))*");
 
-    public static GraphModel parse(Map<String, String> params, Map<String, String> config, String buff) throws Exception{
+    public static GraphModel parse(Map<String, String> params, @NotNull Map<String, String> config, @NotNull String buff) throws Exception{
         System.out.println( "Start parsing" );
 
         GraphModel model = new GraphModel();
@@ -32,7 +33,8 @@ public class GraphModelParser
 
         //Добавим в конфиг параметры из командной строки.
         // Они могут что-то перетерть, но у них приоритет выше
-        config.putAll( params );
+        if( params != null)
+            config.putAll( params );
 
         rows = substituteVariables( config, buff );
 
