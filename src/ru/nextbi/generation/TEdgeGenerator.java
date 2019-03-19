@@ -3,7 +3,8 @@ package ru.nextbi.generation;
 import javafx.util.Pair;
 import ru.nextbi.generation.atomic.IGenerator;
 import ru.nextbi.model.*;
-import ru.nextbi.writers.TEdgeCSVWriter;
+import ru.nextbi.writers.IEdgeWriter;
+import ru.nextbi.writers.csv.TEdgeCSVWriter;
 
 import java.io.File;
 import java.util.HashMap;
@@ -17,12 +18,10 @@ public class TEdgeGenerator{
     protected TEdgeGenerator(){
     }
 
-    public static long generate(File dir, Graph graph, GraphModel model, TEdgeDescription ted, HashMap<String, IGenerator> generators) throws Exception{
+    public static long generate(IEdgeWriter writer, Graph graph, GraphModel model, TEdgeDescription ted, HashMap<String, IGenerator> generators) throws Exception{
         long count = 0;
         List<String> fromList = graph.getVerticesIDList(ted.getFromVertex());
         List<String> toList = graph.getVerticesIDList(ted.getToVertex());
-
-        TEdgeCSVWriter writer = new TEdgeCSVWriter(dir, ted, ',');
 
         // Записал заголовок
         writer.writeHeader();

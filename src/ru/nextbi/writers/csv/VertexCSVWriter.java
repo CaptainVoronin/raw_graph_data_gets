@@ -1,14 +1,15 @@
-package ru.nextbi.writers;
+package ru.nextbi.writers.csv;
 
 import ru.nextbi.GTDGenerator;
 import ru.nextbi.generation.GraphObjectProperty;
 import ru.nextbi.model.BaseVertex;
 import ru.nextbi.model.VertexDescription;
+import ru.nextbi.writers.IVertexWriter;
 
 import java.io.*;
 import java.util.Map;
 
-public class VertexCSVWriter implements IVertextWriter
+class VertexCSVWriter implements IVertexWriter
 {
     File dir;
     String filename;
@@ -50,7 +51,6 @@ public class VertexCSVWriter implements IVertextWriter
         st.append( '\n' );
 
         fous.write( st.toString().getBytes( ) );
-
      }
 
     public void close()

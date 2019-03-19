@@ -1,12 +1,12 @@
-package ru.nextbi.writers;
+package ru.nextbi.writers.csv;
 
 import ru.nextbi.generation.GraphObjectProperty;
 import ru.nextbi.model.*;
+import ru.nextbi.writers.IEdgeWriter;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.Map;
 
 public class TEdgeCSVWriter implements IEdgeWriter
@@ -20,11 +20,11 @@ public class TEdgeCSVWriter implements IEdgeWriter
     int flushLimit;
     int count;
 
-    public TEdgeCSVWriter( File targetDir, TEdgeDescription ted, char delimiter ) throws IOException {
+    public TEdgeCSVWriter(File targetDir, GraphElementDescription ted, char delimiter ) throws IOException {
         dir = targetDir;
         this.filename = targetDir.getPath() + File.separator + ted.getClassName() + ".csv";
         this.delimiter = delimiter;
-        this.ted = ted;
+        this.ted = ( TEdgeDescription ) ted;
         serializer = new TEdgeSerializer ();
         serializer.setDelimiter( delimiter );
         File f = new File( filename );

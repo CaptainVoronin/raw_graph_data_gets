@@ -11,9 +11,19 @@ import java.util.Map;
 public class OmniWriter{
     Map<String, String> config;
     File targetDir;
-    Map<String, VertexCSVWriter> writers;
-    private Map<String, LinkWriter> ownershipWiters;
+    Map<String, IVertexWriter> writers;
+    private Map<String, ILinkWriter> ownershipWiters;
+    IWriterFactory factory;
 
+    public OmniWriter( Map<String, String> config, IWriterFactory factory )
+    {
+        this.config = config;
+        writers = new HashMap<>();
+        ownershipWiters = new HashMap<>();
+        this.factory = factory;
+    }
+
+/*
     public OmniWriter( Map<String, String> config, File targerDir )
     {
         this.targetDir = targerDir;
@@ -21,9 +31,10 @@ public class OmniWriter{
         writers = new HashMap<>();
         ownershipWiters = new HashMap<>();
     }
+*/
 
     public void write( VertexDescription vd, BaseVertex v ) throws Exception{
-        VertexCSVWriter writer = writers.get( vd.getClassName() );
+        IVertexWriter writer = writers.get( vd.getClassName() );
         if( writer == null )
         {
             writer = createWriter( vd );
@@ -32,32 +43,34 @@ public class OmniWriter{
         writer.writeElement( v );
     }
 
-    private VertexCSVWriter createWriter(VertexDescription vd) throws IOException
+    private IVertexWriter createWriter(VertexDescription vd) throws IOException
     {
-        VertexCSVWriter writer = new VertexCSVWriter( targetDir, vd, config );
+        // TODO: Привести в порядок CSVWrite'ы
+        //VertexCSVWriter writer = new VertexCSVWriter( targetDir, vd, config );
+        IVertexWriter writer = factory.createVertexWriter( vd );
         writer.writeHeader();
         return writer;
     }
 
     public void closeAll()
     {
-        for( VertexCSVWriter writer : writers.values() )
+        for( IVertexWriter writer : writers.values() )
             writer.close();
 
-        for( LinkWriter lw : ownershipWiters.values() )
+        for( ILinkWriter lw : ownershipWiters.values() )
             lw.close();
     }
 
     public void closeLinkWriters()
     {
-        for( LinkWriter lw : ownershipWiters.values() )
+        for( ILinkWriter lw : ownershipWiters.values() )
             lw.close();
         ownershipWiters.clear();
     }
 
     public void forgetVertex(String key)
     {
-        VertexCSVWriter writer = writers.get( key );
+        IVertexWriter writer = writers.get( key );
         if( writer != null ) {
             writer.close();
             writers.remove( key );
@@ -66,7 +79,7 @@ public class OmniWriter{
 
     public void forgetLinkWriter(String key)
     {
-        LinkWriter writer = ownershipWiters.get( key );
+        ILinkWriter writer = ownershipWiters.get( key );
         if( writer != null ) {
             writer.close();
             writers.remove( key );
@@ -75,11 +88,10 @@ public class OmniWriter{
 
     public void writeOwnership(String parentClassName, String className, String parentId, String id) throws IOException {
         String key = "link_" + parentClassName + "_" + className;
-        LinkWriter writer = ownershipWiters.get ( key );
+        ILinkWriter writer = ownershipWiters.get ( key );
         if( writer == null )
         {
-            writer = new LinkWriter( targetDir, parentClassName, className,
-                                      config.getOrDefault( "delimiter", "," ).charAt(0) );
+            writer = factory.createLinkWriter( parentClassName, className );
             writer.init();
             ownershipWiters.put( key, writer );
         }

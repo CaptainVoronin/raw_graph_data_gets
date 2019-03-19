@@ -5,6 +5,12 @@ prop: id long_id (for_city)
 prop: city dictionary( dictionary=ru-cities.txt )
 VERTEX_END
 
+VERTEX_START
+class: men [-1,100]
+prop: id long_id (for_bank)
+prop: name dictionary( dictionary=bank-list.txt )
+VERTEX_END
+
 // Банк
 VERTEX_START
 class: bank [-1,100]

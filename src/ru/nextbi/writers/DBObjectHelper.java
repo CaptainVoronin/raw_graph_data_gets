@@ -27,4 +27,10 @@ public class DBObjectHelper {
 
         return doc;
     }
+
+    public static Document linkToObject(String parentClassName, String childClassName, String parent, String child)
+    {
+        Document doc = new Document();
+        return doc.append( parentClassName, parent ).append( childClassName, child  );
+    }
 }

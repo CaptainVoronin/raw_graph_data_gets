@@ -1,9 +1,11 @@
-package ru.nextbi.writers;
+package ru.nextbi.writers.mongo;
 
 import com.mongodb.client.MongoCollection;
 import ru.nextbi.model.BaseEdge;
-import ru.nextbi.model.BaseVertex;
 import ru.nextbi.model.VertexDescription;
+import ru.nextbi.writers.DBObjectHelper;
+import ru.nextbi.writers.IEdgeWriter;
+import ru.nextbi.writers.mongo.MongoConnection;
 
 import java.io.IOException;
 

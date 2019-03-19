@@ -5,8 +5,9 @@ import ru.nextbi.*;
 import ru.nextbi.generation.atomic.IGenerator;
 import ru.nextbi.generation.atomic.IntGenerator;
 import ru.nextbi.model.*;
+import ru.nextbi.writers.IWriterFactory;
 import ru.nextbi.writers.OmniWriter;
-import ru.nextbi.writers.VertexSerializer;
+import ru.nextbi.writers.csv.VertexSerializer;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -20,6 +21,8 @@ public class GraphFactory{
 
     static int count = 0;
 
+    static IWriterFactory writersFactory;
+
     protected GraphFactory(){
     }
 
@@ -30,12 +33,15 @@ public class GraphFactory{
         }
     }
 
-    public static Graph createGraph(Map<String, String> config, File dir, GraphModel model, HashMap<String, IGenerator> generators) throws Exception{
+    public static Graph createGraph(Map<String, String> config, IWriterFactory writersFactory, GraphModel model, HashMap<String, IGenerator> generators) throws Exception{
+
+        GraphFactory.writersFactory = writersFactory;
+
         AInfoPrinter printer = PrinterFactory.getPrinter();
         ( new Thread( printer )).start();
 
         Graph graph = new Graph();
-        OmniWriter omniWriter = new OmniWriter(config, dir);
+        OmniWriter omniWriter = createOmniWriter( config );
 
         // Сначала создаются все ID всех вершин
         Set<String> classes = model.getVertexDescriptions().keySet();
@@ -63,11 +69,13 @@ public class GraphFactory{
 
         System.out.println("Done");
 
+/*
         if( config.containsKey(GTDGenerator.SAVE_IDS) ) {
             System.out.println("Write IDs");
-            saveIDs(config, dir, model, graph);
+            saveIDs(config, writersFactory, model, graph);
             System.out.println("Done");
         }
+*/
 
         // По готовым ID создаем и пишем экземпляры вершин
         System.out.println("Generating vertices instances");
@@ -99,6 +107,11 @@ public class GraphFactory{
         System.out.println("Done");
         printer.terminate();
         return graph;
+    }
+
+    private static OmniWriter createOmniWriter(Map<String, String> config )
+    {
+        return new OmniWriter(config, writersFactory);
     }
 
     private static void saveIDs(Map<String, String> config, File dir, GraphModel model, Graph graph) throws IOException{
@@ -162,7 +175,7 @@ public class GraphFactory{
         }
     }
 
-    public static void createAndWriteEdges(File dir, Graph graph, GraphModel model, HashMap<String, IGenerator> generators) throws Exception{
+    public static void createAndWriteEdges(IWriterFactory writerFactory, Graph graph, GraphModel model, HashMap<String, IGenerator> generators) throws Exception{
         System.out.println("Generating edges");
         count = 0;
         // Потом генерятся все ребра
@@ -175,7 +188,8 @@ public class GraphFactory{
             //Pair<Integer, Integer> pair = VertexGenerator.getRange(ted.getMin(), ted.getMax());
             long count = 0;
             //for( int i = pair.getKey().intValue(); i <= pair.getValue().intValue(); i++ )
-            count += TEdgeGenerator.generate(dir, graph, model, ted, generators);
+
+            count += TEdgeGenerator.generate( writerFactory.createEdgeWriter( ted ), graph, model, ted, generators);
 
             System.out.println("" + count + " has been written");
         }

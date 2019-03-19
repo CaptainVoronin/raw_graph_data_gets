@@ -1,4 +1,4 @@
-package ru.nextbi.writers;
+package ru.nextbi.writers.csv;
 
 import ru.nextbi.generation.GraphObjectProperty;
 import ru.nextbi.model.BaseVertex;

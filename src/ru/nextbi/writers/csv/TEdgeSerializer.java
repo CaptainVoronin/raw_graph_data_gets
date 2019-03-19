@@ -1,11 +1,11 @@
-package ru.nextbi.writers;
+package ru.nextbi.writers.csv;
 
 import ru.nextbi.generation.GraphObjectProperty;
 import ru.nextbi.model.*;
 
 import java.util.Map;
 
-public class TEdgeSerializer
+class TEdgeSerializer
 {
     char delimiter;
 

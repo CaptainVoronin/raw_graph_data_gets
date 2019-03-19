@@ -1,4 +1,4 @@
-package ru.nextbi.writers;
+package ru.nextbi.writers.mongo;
 
 import com.mongodb.*;
 import com.mongodb.client.MongoCollection;

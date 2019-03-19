@@ -1,13 +1,15 @@
-package ru.nextbi.writers;
+package ru.nextbi.writers.mongo;
 
 import com.mongodb.client.MongoCollection;
 import ru.nextbi.model.BaseVertex;
 import ru.nextbi.model.VertexDescription;
+import ru.nextbi.writers.DBObjectHelper;
+import ru.nextbi.writers.IVertexWriter;
+import ru.nextbi.writers.mongo.MongoConnection;
 
 import java.io.IOException;
-import java.util.List;
 
-public class TMongoVertexWriter implements IVertextWriter
+public class TMongoVertexWriter implements IVertexWriter
 {
     MongoConnection connection;
     VertexDescription vertexDescription;

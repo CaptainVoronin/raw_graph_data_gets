@@ -73,6 +73,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/GTDGenerator.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/ru/nextbi/generation/AdjicencyList.java">
           <value>
             <set />
@@ -88,7 +93,17 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/generation/TEdgeGenerator.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/ru/nextbi/generation/VertexGenerator.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/model/BaseVertex.java">
           <value>
             <set />
           </value>
@@ -98,7 +113,52 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/ALinkWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/AdjListWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/DBObjectHelper.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/IEdgeWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/ILinkWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/IVertexWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/IVertextWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/IWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/IWriterFactory.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/OmniWriter.java">
           <value>
             <set />
           </value>
@@ -108,7 +168,67 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/TMongoEdgeWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/TMongoVertexVriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/VertexCSVWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/WriterFactory.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/csv/CSVWtiterFactory.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/csv/LinkWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/csv/TEdgeCSVWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/csv/TEdgeSerializer.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/csv/VertexCSVWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/csv/VertexSerializer.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/mongo/MongoLinkWriter.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/mongo/MongoWritersFactory.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/src/ru/nextbi/writers/mongo/TMongoEdgeWriter.java">
           <value>
             <set />
           </value>
