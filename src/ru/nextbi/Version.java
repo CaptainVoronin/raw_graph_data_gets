@@ -1,7 +1,7 @@
 package ru.nextbi;
 
 public class Version {
-    public static final int BUILD_NUMBER = 116;
+    public static final int BUILD_NUMBER = 125;
     public static final int MAJOR_VERSION = 1;
     public static final int MINOR_VERSION = 0;
 

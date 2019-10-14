@@ -86,8 +86,8 @@ public class GTDGenerator{
             }
 
             inputParams.put(OUTPUT_DIR, outputDirPath);
-        } else if( cmd.hasOption("h") ) {
-            if( !cmd.hasOption("d") ) {
+        } else if( cmd.hasOption("dbhost") ) {
+            if( !cmd.hasOption("dbname") ) {
                 System.out.println("Database name must be set");
                 System.exit(-1);
             }
@@ -175,11 +175,11 @@ public class GTDGenerator{
         version.setRequired(false);
         ops.addOption(version);
 
-        Option dbHost = new Option("h", "dbhost", false, "MongoDB host");
+        Option dbHost = new Option("h", "dbhost", true, "host[:port]");
         dbHost.setRequired(false);
         ops.addOption(dbHost);
 
-        Option dbName = new Option("d", "dbname", false, "MongoDB database name");
+        Option dbName = new Option("d", "dbname", true, "MongoDB database name");
         dbName.setRequired(false);
         ops.addOption(dbName);
         return ops;

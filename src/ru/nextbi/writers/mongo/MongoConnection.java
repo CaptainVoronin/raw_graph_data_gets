@@ -13,7 +13,7 @@ public class MongoConnection {
     MongoClient mongoClient;
     MongoDatabase db;
 
-    public MongoConnection(  String host, String dbName, int port )
+    public MongoConnection( String host, int port, String dbName )
     {
         this.host = host;
         this.port = port;
