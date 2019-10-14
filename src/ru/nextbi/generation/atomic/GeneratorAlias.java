@@ -14,6 +14,7 @@ public enum GeneratorAlias {
     number( "ru.nextbi.generation.atomic.IntGenerator" ),
     string( "ru.nextbi.generation.atomic.StringGenerator" ),
     uuid( "ru.nextbi.generation.atomic.UUIDIDGenerator" );
+    constant( "ru.nextbi.generation.atomic.ConstantGenerator" );
 
     final String className;
 
