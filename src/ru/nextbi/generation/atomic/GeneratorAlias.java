@@ -13,8 +13,9 @@ public enum GeneratorAlias {
     phone_number( "ru.nextbi.generation.atomic.PhoneNumberGenerator" ),
     number( "ru.nextbi.generation.atomic.IntGenerator" ),
     string( "ru.nextbi.generation.atomic.StringGenerator" ),
-    uuid( "ru.nextbi.generation.atomic.UUIDIDGenerator" );
-    constant( "ru.nextbi.generation.atomic.ConstantGenerator" );
+    uuid( "ru.nextbi.generation.atomic.UUIDIDGenerator" ),
+    constant( "ru.nextbi.generation.atomic.ConstantGenerator" ),
+    address( "ru.nextbi.generation.atomic.AddressGenerator" );
 
     final String className;
 
