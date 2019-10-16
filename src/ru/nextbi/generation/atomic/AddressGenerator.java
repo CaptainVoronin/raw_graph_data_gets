@@ -57,18 +57,20 @@ public class AddressGenerator extends BaseDictionaryGenerator{
     }
 
     private void createStreets(String dir, String file) throws Exception{
-        addDictionary( GeneratorUtils.makeAbsolutePath( dir, file ) );
+        Dictionary d = new Dictionary( GeneratorUtils.makeAbsolutePath( dir, file ), noCash( ) );
+        addDictionary( STREETS_KEY, d );
     }
 
     private void createCities(String dir,String file) throws Exception{
-        addDictionary( GeneratorUtils.makeAbsolutePath( dir, file ) );
+        Dictionary d = new Dictionary( GeneratorUtils.makeAbsolutePath( dir, file ), noCash( ) );
+        addDictionary( CITIES_KEY, d );
     }
 
     private String generateAddress() throws IOException, ProviderNotInitiaqlizedException{
         String city = getDictionary( CITIES_KEY ).getRndValue();
         String street = getDictionary( STREETS_KEY ).getRndValue();
         int buildingNumber = getBuildingNumber( city, street );
-        return city + ", ул. " + street + " д." + buildingNumber;
+        return "г." + city + " ул." + street + " д." + buildingNumber;
     }
 
     int getBuildingNumber( String city, String street )

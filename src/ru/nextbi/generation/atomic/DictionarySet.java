@@ -21,7 +21,7 @@ public class DictionarySet extends BaseDictionaryGenerator {
         String path = params.get( "dictionary" );
         if( path != null )
         {
-            path = GeneratorUtils.makeAbsolutePath( config.get(GTDGenerator.CURRENT_DIR_KEY  ), path );
+            path = GeneratorUtils.makeAbsolutePath( config.get(GTDGenerator.CURRENT_DIR_KEY ), path );
             addDictionary( path );
         }
     }

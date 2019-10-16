@@ -10,12 +10,23 @@ import java.util.Map;
  * prop : <name> constant "<value>"
  */
 public class ConstantGenerator implements IGenerator{
+    @Override
+    public void initialize() throws Exception{
 
-    final String value;
+    }
+
+    @Override
+    public void unInialize() throws IOException{
+
+    }
+
+    String value;
 
     @Override
     public void setParams(Map<String, String> config, Map<String, String> params) throws Exception{
-        value = params.get( "constant" );
+        value = params.get( "value" );
+        if( value == null )
+            value = "value";
     }
 
     @Override
@@ -25,6 +36,6 @@ public class ConstantGenerator implements IGenerator{
 
     @Override
     public GraphObjectProperty.Type getDataType(){
-        return return GraphObjectProperty.Type.VARCHAR;
+        return GraphObjectProperty.Type.VARCHAR;
     }
 }
